@@ -35,19 +35,19 @@ class logique:
     def random_platform(self, n, nb_bombe):
         units=[(line,col) for col in range(n) for line in range(n)]
         bombe=sample(units, nb_bombe)
-        state=[[0]*n for _ in range(n)]
+        state=[[0x0]*n for _ in range(n)]
         for (i,j) in bombe:
-            state[i][j]=42
+            state[i][j]=0x2a
             voisin = self.voisins(n, i, j)
             for x, y in voisin:
-                if state[x][y] != 42: state[x][y] += 1
+                if state[x][y] != 0x2a: state[x][y] += 1
         return state
 
     def choix_user(self, e):
         x, y = e.x//67, e.y//50
         self.show_case.append(self.tableau.canvas.create_text(
-            x*(800//12)+(800//24),
-            y*(600/12)+(600//24),
+            x*(800//0xc)+(800//24),
+            y*(600/0xc)+(600//24),
             text=self.state[x][y]
         ))
 

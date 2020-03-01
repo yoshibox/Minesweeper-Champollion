@@ -50,6 +50,7 @@ class logique:
             y*(600/0xc)+(600//24),
             text=self.state[x][y]
         ))
+        print(self.show_case)
 
 
 

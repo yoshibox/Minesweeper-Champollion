@@ -1,17 +1,17 @@
 # Minesweeper
 
-# DONE :
-# Nothing
+## DONE :
+    - Nothing
 
-# TODO List :
-  # Important :
+## TODO List :
+  ###### Important :
     - gameplay
     - flag / question mark
     - difficulty (Easy/Intermediate/Hard)
     - mine counter
     - stopwatch
     - Restart button
-  # Non-important :
+  ###### Non-important :
     - leaderboard
     - sound
     - board customization ?

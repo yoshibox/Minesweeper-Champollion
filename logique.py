@@ -21,9 +21,8 @@ class logique:
     nb_bombe = 24
     show_case = []
 
-    def __init__(self, n, tableau):
+    def __init__(self, n):
         self.n = n
-        self.tableau = tableau
         self.state = self.random_platform(self.n, self.nb_bombe)
 
     def affiche(self):
@@ -43,14 +42,8 @@ class logique:
                 if state[x][y] != 0x2a: state[x][y] += 1
         return state
 
-    def choix_user(self, e):
-        x, y = e.x//67, e.y//50
-        self.show_case.append(self.tableau.canvas.create_text(
-            x*(800//0xc)+(800//24),
-            y*(600/0xc)+(600//24),
-            text=self.state[x][y]
-        ))
-        print(self.show_case)
+    def choix_user(self, x, y):
+        return self.state[x - 1][y - 1]
 
 
 

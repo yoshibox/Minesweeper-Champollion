@@ -45,6 +45,22 @@ class logique:
     def choix_user(self, x, y):
         return self.state[x - 1][y - 1]
 
+    def get_case_from_coordinate(self, e, block_width, block_height, taille_bandeau): # Avoir l'emplacement de la case grâce à ses coordonnées
+        for i in range(self.n):
+            if block_width * i < e.x < block_width * (i+1):
+                x = i + 1
+                break
+        for i in range(self.n):
+            if taille_bandeau + block_height * i < e.y < taille_bandeau + block_height * (i+1):
+                y = i + 1
+                break
+        return (x, y)
+
+    def get_coordinate_from_case(self, x, y, block_width, block_height):
+        xCenter = block_width * (x - 1) + block_width / 2
+        yCenter = block_height * y + block_height / 2
+        return [xCenter, yCenter]
+
 
 
 if __name__ == "__main__":

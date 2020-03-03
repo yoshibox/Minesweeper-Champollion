@@ -20,25 +20,8 @@ class Board:
         self.canvas.bind("<Button-1>", self.__rightclick__)
         self.__menu__()
         self.window.mainloop()
-    
-    def __get_case_from_coordinate__(self, e): # Avoir l'emplacement de la case grâce à ses coordonnées
-        x, y = 0, 0
-        for i in range(n):
-            if self.bSizeL * i < e.x < self.bSizeL * (i+1):
-                x = i + 1
-                break
-        for i in range(n):
-            if self.tailleBandeau + self.bSizeH * i < e.y < self.tailleBandeau + self.bSizeH * (i+1):
-                y = i + 1
-                break
-        return (x, y)
-    
-    def __get_coordinate_from_case(self, x, y):
-        xCenter, yCenter = 0, 0 # Valeur à renvoyer (centre d'affichage du texte)
-        xCenter = self.bSizeL * (x - 1) + self.bSizeL / 2
-        yCenter = self.bSizeH * y + self.bSizeH / 2
-        print(xCenter, yCenter, self.bSizeL)  # REGLER LE PROBLEME : DECALAGE
-        return [xCenter, yCenter]
+
+
 
 
     def __drawBoard__(self):
@@ -47,7 +30,7 @@ class Board:
             for j in range(self.wh):
                 self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
         self.canvas.create_rectangle(0, 0, self.WIDTH, self.tailleBandeau, fill="blue") # Bandeau
-    
+
     def __menu__(self):
         self.state = 0
         self.canvas.delete("all")
@@ -60,7 +43,7 @@ class Board:
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*5, self.WIDTH/(800/600), self.HEIGHT/10*6.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5 + self.HEIGHT/10*6.5)/2, text="HELP", font="Noto 35")
-    
+
     def __rightclick__(self, e):
         if self.state == 0: # Menu
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600): # Click sur la largeur ou il y a les boutons
@@ -70,14 +53,14 @@ class Board:
                     self.__SETTINGS__()
                 elif self.HEIGHT/10*5 < e.y < self.HEIGHT/10*6.5: # Bouton HELP
                     self.__HELP__()
-        
+
         elif self.state == 1:
             if e.y < self.tailleBandeau: # Click dans le bandeau
-                pass 
+                pass
             else:  # Click dans la zone de jeu
-                x, y = self.__get_case_from_coordinate__(e) # Case numéro x, y
+                x, y = logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau) # Case numéro x, y
                 resultat = logic.choix_user(x, y) # Qu'est-ce que y'avait sur cette case ?
-                xCenter, yCenter = self.__get_coordinate_from_case(x, y)
+                xCenter, yCenter = logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
                 self.canvas.create_text(xCenter, yCenter, text=str(resultat)) # CREER UNE FONCTION POUR GERER L'AFFICHAGE DES NOMBRES/DRAPEAUX
 
         elif self.state == 2: # Settings
@@ -91,12 +74,12 @@ class Board:
                     self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.difficulty), font="Noto 15", tags="button")
                 elif self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
                     self.__menu__()
-        
+
         elif self.state == 3: # Help
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
                 if self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
                     self.__menu__()
-    
+
     def __START_GAME__(self):
         self.state = 1
         self.__drawBoard__()
@@ -110,7 +93,7 @@ class Board:
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Noto 20")
-    
+
     def __HELP__(self):
         self.state = 3
         self.canvas.delete("all")
@@ -120,7 +103,7 @@ class Board:
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Noto 20")
-    
+
     def quit(self):
         self.window.quit()
 
@@ -134,6 +117,6 @@ if __name__ == "__main__":
     n = 12
     logic = logique(n)
     tableau = Board(n, logic)
-    
+
 
     #tableau.canvas.bind("<Button-1>", logic.choix_user)

@@ -100,9 +100,9 @@ class Board:
     def __affichage_jeux__(self, e):
         x, y = logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau) # Case numéro x, y
         resultats = logic.choix_user(x, y) # Qu'est-ce que y'avait sur cette case ? (renvoie une liste de tuple (x,y))
-        for r in resultats:
-            if r not in self.board:
-                self.board.append(r)
+        for r, x, y in resultats:
+            if (x, y) not in self.board:
+                self.board.append((x, y))
                 xCenter, yCenter = logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
                 self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20") 
                 # CREER UNE FONCTION POUR GERER L'AFFICHAGE DES NOMBRES/DRAPEAUX

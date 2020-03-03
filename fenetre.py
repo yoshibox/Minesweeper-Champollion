@@ -19,10 +19,6 @@ class Board:
         self.canvas.pack()
         self.canvas.bind("<Button-1>", self.__rightclick__)
         self.__menu__()
-        self.window.mainloop()
-
-
-
 
     def __drawBoard__(self):
         self.canvas.delete("all")
@@ -58,10 +54,7 @@ class Board:
             if e.y < self.tailleBandeau: # Click dans le bandeau
                 pass
             else:  # Click dans la zone de jeu
-                x, y = logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau) # Case numéro x, y
-                resultat = logic.choix_user(x, y) # Qu'est-ce que y'avait sur cette case ?
-                xCenter, yCenter = logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
-                self.canvas.create_text(xCenter, yCenter, text=str(resultat)) # CREER UNE FONCTION POUR GERER L'AFFICHAGE DES NOMBRES/DRAPEAUX
+                self.__affichage_jeux__(e)
 
         elif self.state == 2: # Settings
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
@@ -103,6 +96,20 @@ class Board:
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Noto 20")
+    
+    def __affichage_jeux__(self, e):
+        x, y = logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau) # Case numéro x, y
+        resultats = logic.choix_user(x, y) # Qu'est-ce que y'avait sur cette case ? (renvoie une liste de tuple (x,y))
+        for r in resultats:
+            if r not in self.board:
+                xCenter, yCenter = logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
+                self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20") 
+                # CREER UNE FONCTION POUR GERER L'AFFICHAGE DES NOMBRES/DRAPEAUX
+    
+    def start(self):
+        self.window.mainloop()
+
+
 
     def quit(self):
         self.window.quit()
@@ -117,6 +124,4 @@ if __name__ == "__main__":
     n = 12
     logic = logique(n)
     tableau = Board(n, logic)
-
-
-    #tableau.canvas.bind("<Button-1>", logic.choix_user)
+    tableau.start()

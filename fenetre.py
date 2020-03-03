@@ -35,8 +35,8 @@ class Board:
     
     def __get_coordinate_from_case(self, x, y):
         xCenter, yCenter = 0, 0 # Valeur à renvoyer (centre d'affichage du texte)
-        xCenter = self.bSizeL * x - 1 + self.bSizeL / 2
-        yCenter = self.bSizeH * y - 1 + self.bSizeH / 2
+        xCenter = self.bSizeL * (x - 1) + self.bSizeL / 2
+        yCenter = self.bSizeH * y + self.bSizeH / 2
         print(xCenter, yCenter, self.bSizeL)  # REGLER LE PROBLEME : DECALAGE
         return [xCenter, yCenter]
 

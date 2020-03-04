@@ -11,13 +11,16 @@ class Board:
         self.tailleBandeau = self.WIDTH / 20 # Taille du bandeau de la zone de jeux
         self.bSizeL = self.WIDTH / self.wh  # Largeur des boutons
         self.bSizeH = (self.HEIGHT - self.tailleBandeau) / self.wh # Hauteur des boutons
-        self.board = []
+        self.board = [] # Coordinate of cases disovered on the board
+        self.flag = []  # Coordinate of the flags placed
+        self.qMark = [] # Coordinate of the questions mark placed
         self.difficulty = 1 # 1 = easy, 2 = intermediate, 3 = hard
         self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help
         self.window = Tk()
         self.canvas = Canvas(self.window, width=self.WIDTH, height=self.HEIGHT, background="green")
         self.canvas.pack()
         self.canvas.bind("<Button-1>", self.__rightclick__)
+        self.canvas.bind("<Button-3>", self.__leftclick__)
         self.__menu__()
 
     def __drawBoard__(self):
@@ -72,6 +75,29 @@ class Board:
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
                 if self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
                     self.__menu__()
+    
+    def __leftclick__(self, e):
+        if self.state == 1:
+            x, y = self.logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau)
+            if (x, y) not in self.board: # Si les points ne sont pas découvert, on peut y placer un drapeau
+                if (x, y) not in self.flag: # Si il n'y a pas de drapeau
+                    if (x, y) not in self.qMark: # Si il n'y a pas de point d'interrogation
+                        self.flag.append((x, y))
+                    else:
+                        self.qMark.remove((x, y))
+                elif (x, y) in self.flag: # Si il y a déjà un drapeau
+                    self.flag.remove((x, y)) # Gérer le cas ou le ValueError est lever (même si ça ne doit jamais arriver)
+                    self.qMark.append((x, y))
+            self.__drawFlag()
+    
+    def __drawFlag(self):
+        self.canvas.delete("flag") # flag sont les drapeau et les points d'interrogation
+        for x, y in self.flag:
+            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
+            self.canvas.create_text(xCenter, yCenter, text="99", font="Noto 20", tags="flag")
+        for x, y in self.qMark:
+            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
+            self.canvas.create_text(xCenter, yCenter, text="98", font="Noto 20", tags="flag")
 
     def __START_GAME__(self):
         self.state = 1

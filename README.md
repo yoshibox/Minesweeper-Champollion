@@ -5,7 +5,7 @@
     - [ ] gameplay
     - [x] flag / question mark
     - [ ] difficulty (Easy/Intermediate/Hard)
-    - [ ] mine counter
+    - [x] mine counter
     - [ ] stopwatch
     - [ ] Restart button
   ###### Non-important :

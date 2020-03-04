@@ -22,7 +22,7 @@ class Board:
         self.canvas.pack()
         self.canvas.bind("<Button-1>", self.__rightclick__)
         self.canvas.bind("<Button-3>", self.__leftclick__)
-        self.__loadImages()
+        self.__loadImages__()
         self.__menu__()
 
     def __drawBoard__(self):
@@ -33,6 +33,7 @@ class Board:
                 self.canvas.create_image(xCenter, yCenter - 6, image=self.Case)
                 #self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
         self.canvas.create_rectangle(0, 0, self.WIDTH, self.tailleBandeau, fill="blue") # Bandeau
+        self.__mine_counter_update__()
 
     def __menu__(self):
         self.state = 0
@@ -93,6 +94,7 @@ class Board:
                     self.flag.remove((x, y)) # Gérer le cas ou le ValueError est lever (même si ça ne doit jamais arriver)
                     self.qMark.append((x, y))
             self.__drawFlag()
+            self.__mine_counter_update__()
     
     def __drawFlag(self):
         self.canvas.delete("flag") # flag sont les drapeau et les points d'interrogation
@@ -131,7 +133,7 @@ class Board:
         x, y = self.logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau) # Case numéro x, y
         resultats = self.logic.choix_user(x, y) # Qu'est-ce que y'avait sur cette case ? (renvoie une liste de tuple (x,y))
         for r, x, y in resultats:
-            if (x, y) not in self.board:
+            if (x, y) not in self.board and (x, y) not in self.flag and (x, y) not in self.qMark:
                 self.board.append((x, y))
                 xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
                 if r == 42:
@@ -156,11 +158,10 @@ class Board:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Eight)
                 else:
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20") 
-                # CREER UNE FONCTION POUR GERER L'AFFICHAGE DES NOMBRES/DRAPEAUX
 
     
-    def __loadImages(self):
-        imgTmp = Image.open("assets/minesweeper_01.png")
+    def __loadImages__(self):
+        imgTmp = Image.open("assets/minesweeper_00.png")
         imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
         self.Case = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_05.png")
@@ -172,7 +173,7 @@ class Board:
         imgTmp = Image.open("assets/minesweeper_03.png")
         imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
         self.QMark = ImageTk.PhotoImage(imgTmp)
-        imgTmp = Image.open("assets/minesweeper_00.png")
+        imgTmp = Image.open("assets/minesweeper_01.png")
         imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
         self.Zero = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_08.png")
@@ -199,6 +200,11 @@ class Board:
         imgTmp = Image.open("assets/minesweeper_15.png")
         imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
         self.Eight = ImageTk.PhotoImage(imgTmp)
+    
+
+    def __mine_counter_update__(self):
+        self.canvas.delete("counter")
+        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(logic.nb_bombe - len(self.flag) + len(self.qMark)), font="Noto 20", tags="counter")
 
 
     

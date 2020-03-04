@@ -1,6 +1,8 @@
 from tkinter import *
 from PIL import Image, ImageTk
 from logique import *
+from time import time
+from random import randrange as rd
 
 class Board:
     def __init__(self, n, logique): # n = côté du tableau
@@ -12,11 +14,14 @@ class Board:
         self.tailleBandeau = self.WIDTH / 20 # Taille du bandeau de la zone de jeux
         self.bSizeL = self.WIDTH / self.wh  # Largeur des boutons
         self.bSizeH = (self.HEIGHT - self.tailleBandeau) / self.wh # Hauteur des boutons
+        self.Emojis = [] # Liste des emojis
         self.board = [] # Coordinate of cases disovered on the board
         self.flag = []  # Coordinate of the flags placed
         self.qMark = [] # Coordinate of the questions mark placed
         self.difficulty = 1 # 1 = easy, 2 = intermediate, 3 = hard
         self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help
+        self.timer = 0 # Timer
+        self.pTime = 0 # Previous time self.timer has been updated
         self.window = Tk()
         self.canvas = Canvas(self.window, width=self.WIDTH, height=self.HEIGHT, background="green")
         self.canvas.pack()
@@ -24,6 +29,13 @@ class Board:
         self.canvas.bind("<Button-3>", self.__leftclick__)
         self.__loadImages__()
         self.__menu__()
+    
+
+    def __stopwatch_update__(self):
+        self.timer = round(time() - self.pTime, 2)
+        ptime = time()
+        self.canvas.delete("timer")
+        self.canvas.create_text(self.WIDTH - self.WIDTH/40, self.tailleBandeau/2, text=str(round(self.timer)), font="Noto 20", tags="timer")
 
     def __drawBoard__(self):
         self.canvas.delete("all")
@@ -34,6 +46,7 @@ class Board:
                 #self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
         self.canvas.create_rectangle(0, 0, self.WIDTH, self.tailleBandeau, fill="blue") # Bandeau
         self.__mine_counter_update__()
+        self.__emoji__()
 
     def __menu__(self):
         self.state = 0
@@ -60,8 +73,11 @@ class Board:
 
         elif self.state == 1:
             if e.y < self.tailleBandeau: # Click dans le bandeau
-                pass
+                self.__stopwatch_update__()
+                if self.WIDTH/2 - self.tailleBandeau/2 < e.x < self.WIDTH/2 + self.tailleBandeau/2:
+                    self.__emoji__()
             else:  # Click dans la zone de jeu
+                self.__stopwatch_update__()
                 self.__affichage_jeux__(e)
 
         elif self.state == 2: # Settings
@@ -95,6 +111,7 @@ class Board:
                     self.qMark.append((x, y))
             self.__drawFlag()
             self.__mine_counter_update__()
+            self.__stopwatch_update__()
     
     def __drawFlag(self):
         self.canvas.delete("flag") # flag sont les drapeau et les points d'interrogation
@@ -107,6 +124,9 @@ class Board:
 
     def __START_GAME__(self):
         self.state = 1
+        self.timer = 0
+        self.pTime = time()
+        self.__stopwatch_update__()
         self.__drawBoard__()
 
     def __SETTINGS__(self):
@@ -157,7 +177,7 @@ class Board:
                 elif r == 8:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Eight)
                 else:
-                    self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20") 
+                    self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
 
     
     def __loadImages__(self):
@@ -200,11 +220,23 @@ class Board:
         imgTmp = Image.open("assets/minesweeper_15.png")
         imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
         self.Eight = ImageTk.PhotoImage(imgTmp)
+
+        imgTmp = Image.open("assets/emojis/emoji_smiling.png")
+        imgTmp = imgTmp.resize(((int(self.tailleBandeau)), int(self.tailleBandeau)))
+        self.Emojis.append(ImageTk.PhotoImage(imgTmp))
+        imgTmp = Image.open("assets/emojis/emoji_tear_of_joy.png")
+        imgTmp = imgTmp.resize(((int(self.tailleBandeau)), int(self.tailleBandeau)))
+        self.Emojis.append(ImageTk.PhotoImage(imgTmp))
+    
+
+    def __emoji__(self):
+        self.canvas.delete("emoji")
+        self.canvas.create_image(self.WIDTH/2, self.tailleBandeau/2, image=self.Emojis[rd(0, len(self.Emojis))], tags="emoji")
     
 
     def __mine_counter_update__(self):
         self.canvas.delete("counter")
-        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(logic.nb_bombe - len(self.flag) + len(self.qMark)), font="Noto 20", tags="counter")
+        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(self.logic.nb_bombe - len(self.flag) + len(self.qMark)), font="Noto 20", tags="counter")
 
 
     

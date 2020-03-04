@@ -13,7 +13,7 @@
     - [ ] sound
     - [ ] board customization ?
     - [ ] Afficheur SSD ?
-    - [ ] smiley at the top (with reaction)
+    - [x] smiley at the top (with reaction)
     - [ ] move cancellation
     - [ ] resizable board
     - [ ] themes

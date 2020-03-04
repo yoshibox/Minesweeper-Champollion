@@ -3,7 +3,7 @@
 ## TODO List :
   ###### Important :
     - [ ] gameplay
-    - [ ] flag / question mark
+    - [x] flag / question mark
     - [ ] difficulty (Easy/Intermediate/Hard)
     - [ ] mine counter
     - [ ] stopwatch

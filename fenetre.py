@@ -1,4 +1,5 @@
 from tkinter import *
+from PIL import Image, ImageTk
 from logique import *
 
 class Board:
@@ -21,13 +22,16 @@ class Board:
         self.canvas.pack()
         self.canvas.bind("<Button-1>", self.__rightclick__)
         self.canvas.bind("<Button-3>", self.__leftclick__)
+        self.__loadImages()
         self.__menu__()
 
     def __drawBoard__(self):
         self.canvas.delete("all")
-        for i in range(self.wh):
-            for j in range(self.wh):
-                self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
+        for i in range(self.wh + 1): # Enlever + 1 quand logique.py commit
+            for j in range(self.wh + 1): # Same + Ne pas oublier de remplacer par <= dans get_coordinate_from_case
+                xCenter, yCenter = self.logic.get_coordinate_from_case(i, j, self.bSizeL, self.bSizeH)
+                self.canvas.create_image(xCenter, yCenter - 6, image=self.Case)
+                #self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
         self.canvas.create_rectangle(0, 0, self.WIDTH, self.tailleBandeau, fill="blue") # Bandeau
 
     def __menu__(self):
@@ -94,10 +98,10 @@ class Board:
         self.canvas.delete("flag") # flag sont les drapeau et les points d'interrogation
         for x, y in self.flag:
             xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
-            self.canvas.create_text(xCenter, yCenter, text="99", font="Noto 20", tags="flag")
+            self.canvas.create_image(xCenter, yCenter - 6, image=self.Flag, tags="flag")
         for x, y in self.qMark:
             xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
-            self.canvas.create_text(xCenter, yCenter, text="98", font="Noto 20", tags="flag")
+            self.canvas.create_image(xCenter, yCenter - 6, image=self.QMark, tags="flag")
 
     def __START_GAME__(self):
         self.state = 1
@@ -130,8 +134,73 @@ class Board:
             if (x, y) not in self.board:
                 self.board.append((x, y))
                 xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
-                self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20") 
+                if r == 42:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Bomb) # pk -6 ??????????????
+                elif r == 0:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Zero)
+                elif r == 1:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.One)
+                elif r == 2:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Two)
+                elif r == 3:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Three)
+                elif r == 4:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Four)
+                elif r == 5:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Five)
+                elif r == 6:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Six)
+                elif r == 7:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Seven)
+                elif r == 8:
+                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Eight)
+                else:
+                    self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20") 
                 # CREER UNE FONCTION POUR GERER L'AFFICHAGE DES NOMBRES/DRAPEAUX
+
+    
+    def __loadImages(self):
+        imgTmp = Image.open("assets/minesweeper_01.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Case = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_05.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Bomb = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_02.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Flag = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_03.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.QMark = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_00.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Zero = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_08.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.One = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_09.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Two = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_10.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Three = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_11.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Four = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_12.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Five = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_13.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Six = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_14.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Seven = ImageTk.PhotoImage(imgTmp)
+        imgTmp = Image.open("assets/minesweeper_15.png")
+        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        self.Eight = ImageTk.PhotoImage(imgTmp)
+
+
     
     def start(self):
         self.window.mainloop()

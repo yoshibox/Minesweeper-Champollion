@@ -1,7 +1,7 @@
 from tkinter import *
 from PIL import Image, ImageTk
 from logique import *
-from time import time
+from threading import Timer
 from random import randrange as rd
 
 class Board:
@@ -21,26 +21,28 @@ class Board:
         self.difficulty = 1 # 1 = easy, 2 = intermediate, 3 = hard
         self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help
         self.timer = 0 # Timer
-        self.pTime = 0 # Previous time self.timer has been updated
         self.window = Tk()
+        self.window.protocol("WM_DELETE_WINDOW", self.quit) # Appeler cette fonction quand la fenêtre est fermer
         self.canvas = Canvas(self.window, width=self.WIDTH, height=self.HEIGHT, background="green")
         self.canvas.pack()
         self.canvas.bind("<Button-1>", self.__rightclick__)
         self.canvas.bind("<Button-3>", self.__leftclick__)
+        self.stopwatch = None # timer Threading 
         self.__loadImages__()
         self.__menu__()
     
 
     def __stopwatch_update__(self):
-        self.timer = round(time() - self.pTime, 2)
-        ptime = time()
+        self.stopwatch = Timer(1, self.__stopwatch_update__)
+        self.stopwatch.start()
+        self.timer += 1
         self.canvas.delete("timer")
         self.canvas.create_text(self.WIDTH - self.WIDTH/40, self.tailleBandeau/2, text=str(round(self.timer)), font="Noto 20", tags="timer")
 
     def __drawBoard__(self):
         self.canvas.delete("all")
-        for i in range(self.wh + 1): # Enlever + 1 quand logique.py commit
-            for j in range(self.wh + 1): # Same + Ne pas oublier de remplacer par <= dans get_coordinate_from_case
+        for i in range(self.wh): # Enlever + 1 quand logique.py commit
+            for j in range(self.wh): # Same + Ne pas oublier de remplacer par <= dans get_coordinate_from_case
                 xCenter, yCenter = self.logic.get_coordinate_from_case(i, j, self.bSizeL, self.bSizeH)
                 self.canvas.create_image(xCenter, yCenter - 6, image=self.Case)
                 #self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
@@ -73,11 +75,9 @@ class Board:
 
         elif self.state == 1:
             if e.y < self.tailleBandeau: # Click dans le bandeau
-                self.__stopwatch_update__()
                 if self.WIDTH/2 - self.tailleBandeau/2 < e.x < self.WIDTH/2 + self.tailleBandeau/2:
                     self.__emoji__()
             else:  # Click dans la zone de jeu
-                self.__stopwatch_update__()
                 self.__affichage_jeux__(e)
 
         elif self.state == 2: # Settings
@@ -111,7 +111,6 @@ class Board:
                     self.qMark.append((x, y))
             self.__drawFlag()
             self.__mine_counter_update__()
-            self.__stopwatch_update__()
     
     def __drawFlag(self):
         self.canvas.delete("flag") # flag sont les drapeau et les points d'interrogation
@@ -125,7 +124,6 @@ class Board:
     def __START_GAME__(self):
         self.state = 1
         self.timer = 0
-        self.pTime = time()
         self.__stopwatch_update__()
         self.__drawBoard__()
 
@@ -158,6 +156,7 @@ class Board:
                 xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
                 if r == 42:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Bomb) # pk -6 ??????????????
+                    # Scénario de fin (tout les tuples dans resultats seront des bombes)
                 elif r == 0:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Zero)
                 elif r == 1:
@@ -182,50 +181,50 @@ class Board:
     
     def __loadImages__(self):
         imgTmp = Image.open("assets/minesweeper_00.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Case = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_05.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Bomb = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_02.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Flag = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_03.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.QMark = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_01.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Zero = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_08.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.One = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_09.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Two = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_10.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Three = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_11.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Four = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_12.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Five = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_13.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Six = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_14.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Seven = ImageTk.PhotoImage(imgTmp)
         imgTmp = Image.open("assets/minesweeper_15.png")
-        imgTmp = imgTmp.resize((int(self.bSizeL), int(self.bSizeH)))
+        imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         self.Eight = ImageTk.PhotoImage(imgTmp)
 
         imgTmp = Image.open("assets/emojis/emoji_smiling.png")
-        imgTmp = imgTmp.resize(((int(self.tailleBandeau)), int(self.tailleBandeau)))
+        imgTmp = imgTmp.resize(((round(self.tailleBandeau)), round(self.tailleBandeau)))
         self.Emojis.append(ImageTk.PhotoImage(imgTmp))
         imgTmp = Image.open("assets/emojis/emoji_tear_of_joy.png")
-        imgTmp = imgTmp.resize(((int(self.tailleBandeau)), int(self.tailleBandeau)))
+        imgTmp = imgTmp.resize(((round(self.tailleBandeau)), round(self.tailleBandeau)))
         self.Emojis.append(ImageTk.PhotoImage(imgTmp))
     
 
@@ -236,7 +235,7 @@ class Board:
 
     def __mine_counter_update__(self):
         self.canvas.delete("counter")
-        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(self.logic.nb_bombe - len(self.flag) + len(self.qMark)), font="Noto 20", tags="counter")
+        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(self.logic.nb_bombe - (len(self.flag) + len(self.qMark))), font="Noto 20", tags="counter")
 
 
     
@@ -247,6 +246,8 @@ class Board:
 
     def quit(self):
         self.window.quit()
+        if self.stopwatch != None:
+            self.stopwatch.cancel()
 
 
 

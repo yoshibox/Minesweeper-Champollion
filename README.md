@@ -6,7 +6,7 @@
     - [x] flag / question mark
     - [ ] difficulty (Easy/Intermediate/Hard)
     - [x] mine counter
-    - [ ] stopwatch
+    - [x] stopwatch
     - [ ] Restart button
   ###### Non-important :
     - [ ] leaderboard

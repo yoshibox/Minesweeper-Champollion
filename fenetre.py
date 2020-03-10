@@ -19,7 +19,7 @@ class Board:
         self.flag = []  # Coordinate of the flags placed
         self.qMark = [] # Coordinate of the questions mark placed
         self.difficulty = 1 # 1 = easy, 2 = intermediate, 3 = hard
-        self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help
+        self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help, 4 = game over
         self.timer = 0 # Timer
         self.window = Tk()
         self.window.protocol("WM_DELETE_WINDOW", self.quit) # Appeler cette fonction quand la fenêtre est fermer
@@ -41,8 +41,8 @@ class Board:
 
     def __drawBoard__(self):
         self.canvas.delete("all")
-        for i in range(self.wh): # Enlever + 1 quand logique.py commit
-            for j in range(self.wh): # Same + Ne pas oublier de remplacer par <= dans get_coordinate_from_case
+        for i in range(self.wh):
+            for j in range(self.wh):
                 xCenter, yCenter = self.logic.get_coordinate_from_case(i, j, self.bSizeL, self.bSizeH)
                 self.canvas.create_image(xCenter, yCenter - 6, image=self.Case)
                 #self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
@@ -96,6 +96,10 @@ class Board:
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
                 if self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
                     self.__menu__()
+        
+        elif self.state == 4:
+            if self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.4 < e.y < self.HEIGHT*0.6:
+                self.__menu__()
     
     def __leftclick__(self, e):
         if self.state == 1:
@@ -147,6 +151,13 @@ class Board:
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Noto 20")
     
+    def __GAME_OVER__(self):
+        self.state = 4
+        self.__stop_thread__()
+        self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.4, self.WIDTH*0.8, self.HEIGHT*0.6, fill="pink")
+        self.canvas.create_text(self.WIDTH/2, self.HEIGHT/2, text="Retry", font="Noto 40")
+
+    
     def __affichage_jeux__(self, e):
         x, y = self.logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau) # Case numéro x, y
         resultats = self.logic.choix_user(x, y) # Qu'est-ce que y'avait sur cette case ? (renvoie une liste de tuple (x,y))
@@ -157,6 +168,7 @@ class Board:
                 if r == 42:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Bomb) # pk -6 ??????????????
                     # Scénario de fin (tout les tuples dans resultats seront des bombes)
+                    self.__GAME_OVER__()
                 elif r == 0:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Zero)
                 elif r == 1:
@@ -241,13 +253,15 @@ class Board:
     
     def start(self):
         self.window.mainloop()
+    
 
-
-
-    def quit(self):
-        self.window.quit()
+    def __stop_thread__(self):
         if self.stopwatch != None:
             self.stopwatch.cancel()
+    
+    def quit(self):
+        self.__stop_thread__()
+        self.window.quit()
 
 
 

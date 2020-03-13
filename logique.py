@@ -120,8 +120,8 @@ class logique:
         return self.data[self.user]["current_difficulty"]
 
     def reset(self):
-        locate_0 = []
-        locate_0x2a = []
+        self.locate_0 = []
+        self.locate_0x2a = []
 
     def current_user(self, str):
         """

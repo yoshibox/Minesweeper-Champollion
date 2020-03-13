@@ -15,6 +15,8 @@ dans la matrice:
 information du plateau:
     width: 800px
     height: 600px
+information sur la difficulter:
+
 """
 
 
@@ -120,6 +122,7 @@ class logique:
         return self.data[self.user]["current_difficulty"]
 
     def reset(self):
+        self.state = None
         self.locate_0 = []
         self.locate_0x2a = []
 

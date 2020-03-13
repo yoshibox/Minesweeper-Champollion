@@ -95,16 +95,16 @@ class Board:
         elif self.state == 3: # Help
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
                 if self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
-                    self.board = []
-                    self.flag = []
-                    self.qMark = []
                     self.__menu__()
         
         elif self.state == 4:
             if self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.4 < e.y < self.HEIGHT*0.6:
+                self.board = []
+                self.flag = []
+                self.qMark = []
                 self.logic.reset()
                 self.__menu__()
-    
+
     def __leftclick__(self, e):
         if self.state == 1:
             x, y = self.logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau)
@@ -119,7 +119,7 @@ class Board:
                     self.qMark.append((x, y))
             self.__drawFlag()
             self.__mine_counter_update__()
-    
+
     def __drawFlag(self):
         self.canvas.delete("flag") # flag sont les drapeau et les points d'interrogation
         for x, y in self.flag:

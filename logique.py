@@ -119,7 +119,7 @@ class logique:
     def get_difficulty(self):
         return self.data[self.user]["current_difficulty"]
 
-    def reset():
+    def reset(self):
         locate_0 = []
         locate_0x2a = []
 

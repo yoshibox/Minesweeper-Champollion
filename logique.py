@@ -25,10 +25,11 @@ class logique:
     locate_0x2a = []
     data=None
     user="nom_random"
+    state=None
 
     def __init__(self, n):
         self.n = n
-        self.state = self.random_platform(self.n, self.nb_bombe)
+        self.random_platform(self.n, self.nb_bombe)
         try:
             with open("assets/data.json") as new_json:
                 self.data = json.load(new_json)
@@ -63,7 +64,7 @@ class logique:
             voisin = self.voisins(n, i, z)
             for x, y in voisin:
                 if state[x][y] != 0x2a: state[x][y] += 1
-        return state
+        self.state = state
 
     def detect_zero(self, x, y):
         result=[]
@@ -96,6 +97,9 @@ class logique:
             result.append((self.state[x][y], x, y))
         else: result.append((self.state[x][y], x, y))
         result.extend(autres)
+        if result[0][0] == 0x2a:
+            self.locate_0 = []
+            self.locate_0x2a = []
         return result #.extend(autres)
 
     def get_case_from_coordinate(self, e, block_width, block_height, taille_bandeau):
@@ -113,6 +117,9 @@ class logique:
         return self.data[self.user]["current_difficulty"]
 
     def current_user(self, str):
+        """
+            str: str
+        """
         self.user = str
         if self.user not in self.data.keys():
             print("un truc")

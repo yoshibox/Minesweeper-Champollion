@@ -95,6 +95,9 @@ class Board:
         elif self.state == 3: # Help
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
                 if self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
+                    self.board = []
+                    self.flag = []
+                    self.qMark = []
                     self.__menu__()
         
         elif self.state == 4:
@@ -156,6 +159,10 @@ class Board:
         self.__stop_thread__()
         self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.4, self.WIDTH*0.8, self.HEIGHT*0.6, fill="pink")
         self.canvas.create_text(self.WIDTH/2, self.HEIGHT/2, text="Retry", font="Noto 40")
+    
+
+    def __GAME_WON__(self):
+        pass
 
     
     def __affichage_jeux__(self, e):
@@ -167,7 +174,6 @@ class Board:
                 xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
                 if r == 42:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Bomb) # pk -6 ??????????????
-                    # Scénario de fin (tout les tuples dans resultats seront des bombes)
                     self.__GAME_OVER__()
                 elif r == 0:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Zero)
@@ -189,12 +195,13 @@ class Board:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Eight)
                 else:
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
+        #if len(self.board) == 
 
     def __get_resized_tile__(self, name):
         imgTmp = Image.open("assets/" + name)
         imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         return ImageTk.PhotoImage(imgTmp)
-    
+
     def __loadImages__(self):
         self.Case = self.__get_resized_tile__("minesweeper_00.png")
         self.Bomb = self.__get_resized_tile__("minesweeper_05.png")

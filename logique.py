@@ -16,7 +16,15 @@ information du plateau:
     width: 800px
     height: 600px
 information sur la difficulter:
-
+    difficulty 1:
+        nb_bombe = 24
+        n = 12
+    difficulty 2:
+        nb_bombe = 42
+        n = 16
+    difficulty 3:
+        nb_bombe = 84
+        n = 20
 """
 
 
@@ -155,7 +163,17 @@ class logique:
         """
 
         with open("assets/data.json","w") as data_json:
-            if difficulty: self.data[self.user]["current_difficulty"] = difficulty
+            if difficulty:
+                self.data[self.user]["current_difficulty"] = difficulty
+                if difficulty == 2:
+                    self.nb_bombe = 42
+                    self.n = 16
+                elif difficulty == 3:
+                    self.nb_bombe = 84
+                    self.n = 20
+                else:
+                    self.nb_bombe = 24
+                    self.n = 12
             if music: self.data[self.user]["musique"] = music
             if score:
                 self.data[self.user][ str(self.data[self.user]["current_difficulty"]) ].append([score[0], score[1]])

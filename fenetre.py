@@ -102,6 +102,7 @@ class Board:
         
         elif self.state == 4:
             if self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.4 < e.y < self.HEIGHT*0.6:
+                self.logic.reset()
                 self.__menu__()
     
     def __leftclick__(self, e):
@@ -195,7 +196,8 @@ class Board:
                     self.canvas.create_image(xCenter, yCenter - 6, image=self.Eight)
                 else:
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
-        #if len(self.board) == 
+        if len(self.board) == self.wh ** 2 - self.logic.nb_bombe:
+            self.__GAME_WON__()
 
     def __get_resized_tile__(self, name):
         imgTmp = Image.open("assets/" + name)

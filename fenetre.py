@@ -44,8 +44,8 @@ class Board: # écran de chargement Champollion
         self.canvas.delete("all")
         for i in range(self.logic.n):
             for j in range(self.logic.n):
-                xCenter, yCenter = self.logic.get_coordinate_from_case(i, j, self.bSizeL, self.bSizeH)
-                self.canvas.create_image(xCenter, yCenter, image=self.Case)
+                xCenter, yCenter = self.logic.get_coordinate_from_case(i, j, self.bSizeL, self.bSizeH, self.tailleBandeau)
+                self.canvas.create_image(xCenter, yCenter, image=self.Case, anchor=CENTER)
                 #self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
         self.canvas.create_rectangle(0, 0, self.WIDTH, self.tailleBandeau, fill="blue") # Bandeau
         self.__mine_counter_update__()
@@ -125,10 +125,10 @@ class Board: # écran de chargement Champollion
     def __drawFlag(self):
         self.canvas.delete("flag") # flag sont les drapeau et les points d'interrogation
         for x, y in self.flag:
-            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
+            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH, self.tailleBandeau)
             self.canvas.create_image(xCenter, yCenter, image=self.Flag, tags="flag")
         for x, y in self.qMark:
-            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
+            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH, self.tailleBandeau)
             self.canvas.create_image(xCenter, yCenter, image=self.QMark, tags="flag")
 
     def __START_GAME__(self):
@@ -174,7 +174,7 @@ class Board: # écran de chargement Champollion
         for r, x, y in resultats:
             if (x, y) not in self.board and (x, y) not in self.flag and (x, y) not in self.qMark:
                 self.board.append((x, y))
-                xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
+                xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH, self.tailleBandeau)
                 if r == 42:
                     self.canvas.create_image(xCenter, yCenter, image=self.Bomb) # pk -6 ??????????????
                     self.__GAME_OVER__()

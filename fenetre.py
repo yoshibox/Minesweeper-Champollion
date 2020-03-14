@@ -4,32 +4,33 @@ from logique import *
 from threading import Timer
 from random import randrange as rd
 
-class Board:
+class Board: # écran de chargement Champollion
     def __init__(self, n, logique): # n = côté du tableau
         self.logic = logique
         self.play = 1
         self.WIDTH = 800
         self.HEIGHT = 600
-        self.wh = n   # Nombre de boutons sur la largeur et la hauteur
         self.tailleBandeau = self.WIDTH / 20 # Taille du bandeau de la zone de jeux
-        self.bSizeL = self.WIDTH / self.wh  # Largeur des boutons
-        self.bSizeH = (self.HEIGHT - self.tailleBandeau) / self.wh # Hauteur des boutons
         self.Emojis = [] # Liste des emojis
         self.board = [] # Coordinate of cases disovered on the board
         self.flag = []  # Coordinate of the flags placed
         self.qMark = [] # Coordinate of the questions mark placed
-        self.difficulty = 1 # 1 = easy, 2 = intermediate, 3 = hard
         self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help, 4 = game over
         self.timer = 0 # Timer
         self.window = Tk()
         self.window.protocol("WM_DELETE_WINDOW", self.quit) # Appeler cette fonction quand la fenêtre est fermer
         self.canvas = Canvas(self.window, width=self.WIDTH, height=self.HEIGHT, background="green")
         self.canvas.pack()
+        self.__update_sizes__()
         self.canvas.bind("<Button-1>", self.__rightclick__)
         self.canvas.bind("<Button-3>", self.__leftclick__)
         self.stopwatch = None # timer Threading 
-        self.__loadImages__()
         self.__menu__()
+    
+    def __update_sizes__(self):
+        self.bSizeL = self.WIDTH / self.logic.n  # Largeur des boutons
+        self.bSizeH = (self.HEIGHT - self.tailleBandeau) / self.logic.n # Hauteur des boutons
+        self.__loadImages__()
     
 
     def __stopwatch_update__(self):
@@ -41,10 +42,10 @@ class Board:
 
     def __drawBoard__(self):
         self.canvas.delete("all")
-        for i in range(self.wh):
-            for j in range(self.wh):
-                xCenter, yCenter = self.logic.get_coordinate_from_case(i, j, self.bSizeL, self.bSizeH)
-                self.canvas.create_image(xCenter, yCenter - 6, image=self.Case)
+        for i in range(self.logic.n):
+            for j in range(self.logic.n):
+                xCenter, yCenter = self.logic.get_coordinate_from_case(i, j, self.bSizeL, self.bSizeH, self.tailleBandeau)
+                self.canvas.create_image(xCenter, yCenter, image=self.Case, anchor=CENTER)
                 #self.canvas.create_rectangle(i * self.bSizeL, self.tailleBandeau + j * self.bSizeH, i * self.bSizeL + self.bSizeL, self.tailleBandeau + j * self.bSizeH + self.bSizeH, fill="gray", outline="black")
         self.canvas.create_rectangle(0, 0, self.WIDTH, self.tailleBandeau, fill="blue") # Bandeau
         self.__mine_counter_update__()
@@ -83,12 +84,13 @@ class Board:
         elif self.state == 2: # Settings
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
                 if self.HEIGHT/10 < e.y < self.HEIGHT/10*2.5:
-                    if self.difficulty == 3:
-                        self.difficulty = 1
+                    if self.logic.get_difficulty() == 3:
+                        self.logic.save_data(difficulty=1)
                     else:
-                        self.difficulty += 1
+                        self.logic.save_data(difficulty=self.logic.get_difficulty()+1)
                     self.canvas.delete("button")
-                    self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.difficulty), font="Noto 15", tags="button")
+                    self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.logic.get_difficulty()), font="Noto 15", tags="button")
+                    self.__update_sizes__()
                 elif self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
                     self.__menu__()
 
@@ -123,11 +125,11 @@ class Board:
     def __drawFlag(self):
         self.canvas.delete("flag") # flag sont les drapeau et les points d'interrogation
         for x, y in self.flag:
-            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
-            self.canvas.create_image(xCenter, yCenter - 6, image=self.Flag, tags="flag")
+            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH, self.tailleBandeau)
+            self.canvas.create_image(xCenter, yCenter, image=self.Flag, tags="flag")
         for x, y in self.qMark:
-            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
-            self.canvas.create_image(xCenter, yCenter - 6, image=self.QMark, tags="flag")
+            xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH, self.tailleBandeau)
+            self.canvas.create_image(xCenter, yCenter, image=self.QMark, tags="flag")
 
     def __START_GAME__(self):
         self.state = 1
@@ -140,7 +142,7 @@ class Board:
         self.canvas.delete("all")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10, self.WIDTH/(800/600), self.HEIGHT/10*2.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.difficulty), font="Noto 15", tags="button")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.logic.get_difficulty()), font="Noto 15", tags="button")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Noto 20")
@@ -165,38 +167,38 @@ class Board:
     def __GAME_WON__(self):
         pass
 
-    
+
     def __affichage_jeux__(self, e):
         x, y = self.logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau) # Case numéro x, y
         resultats = self.logic.choix_user(x, y) # Qu'est-ce que y'avait sur cette case ? (renvoie une liste de tuple (x,y))
         for r, x, y in resultats:
             if (x, y) not in self.board and (x, y) not in self.flag and (x, y) not in self.qMark:
                 self.board.append((x, y))
-                xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH)
+                xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH, self.tailleBandeau)
                 if r == 42:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Bomb) # pk -6 ??????????????
+                    self.canvas.create_image(xCenter, yCenter, image=self.Bomb) # pk -6 ??????????????
                     self.__GAME_OVER__()
                 elif r == 0:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Zero)
+                    self.canvas.create_image(xCenter, yCenter, image=self.Zero)
                 elif r == 1:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.One)
+                    self.canvas.create_image(xCenter, yCenter, image=self.One)
                 elif r == 2:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Two)
+                    self.canvas.create_image(xCenter, yCenter, image=self.Two)
                 elif r == 3:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Three)
+                    self.canvas.create_image(xCenter, yCenter, image=self.Three)
                 elif r == 4:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Four)
+                    self.canvas.create_image(xCenter, yCenter, image=self.Four)
                 elif r == 5:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Five)
+                    self.canvas.create_image(xCenter, yCenter, image=self.Five)
                 elif r == 6:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Six)
+                    self.canvas.create_image(xCenter, yCenter, image=self.Six)
                 elif r == 7:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Seven)
+                    self.canvas.create_image(xCenter, yCenter, image=self.Seven)
                 elif r == 8:
-                    self.canvas.create_image(xCenter, yCenter - 6, image=self.Eight)
+                    self.canvas.create_image(xCenter, yCenter, image=self.Eight)
                 else:
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
-        if len(self.board) == self.wh ** 2 - self.logic.nb_bombe:
+        if len(self.board) == self.logic.n ** 2 - self.logic.nb_bombe:
             self.__GAME_WON__()
 
     def __get_resized_tile__(self, name):
@@ -242,6 +244,7 @@ class Board:
     
     def start(self):
         self.window.mainloop()
+        #login_window = 
     
 
     def __stop_thread__(self):

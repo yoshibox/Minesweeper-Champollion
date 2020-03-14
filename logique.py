@@ -124,9 +124,9 @@ class logique:
             if taille_bandeau + block_height * i < e.y < taille_bandeau + block_height * (i+1): y = i
         return (x, y)
 
-    def get_coordinate_from_case(self, x, y, block_width, block_height):
+    def get_coordinate_from_case(self, x, y, block_width, block_height, taille_bandeau):
         xCenter = block_width * x + block_width / 2
-        yCenter = block_height * (y+1) + block_height / 2
+        yCenter = block_height * y + block_height / 2 + taille_bandeau
         return [xCenter, yCenter]
 
     def get_difficulty(self):

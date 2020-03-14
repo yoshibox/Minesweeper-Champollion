@@ -38,6 +38,7 @@ class logique:
     user="nom_random"
     state=None
 
+
     def __init__(self, n):
         self.n = n
 
@@ -48,7 +49,9 @@ class logique:
             self.data = {
                 "nom_random": {
                     "musique": "assets/dc_rock_bust.mp3",
-                    "current_difficulty": 1,
+                    "current_difficulty": 1
+                },
+                "leader_board": {
                     "1": [],
                     "2": [],
                     "3": []
@@ -57,12 +60,15 @@ class logique:
             json.dumps(self.data)
             with open("assets/data.json","w") as new_json: new_json.write(json.dumps(self.data))
 
+
     def affiche(self):
         print('\n'.join(' '.join(map(str, L)) for L in self.state))
         print()
 
+
     def voisins(self, n, i, j):
         return [(a,b) for (a, b) in [(i, j+1),(i, j-1),(i-1, j),(i+1,j),(i+1,j+1),(i-1,j-1),(i-1,j+1),(i+1,j-1)] if a in range(n) and b in range(n)]
+
 
     def random_platform(self, n, nb_bombe):
         #a faire: si l'user click sur une bombe on refais la platfome
@@ -77,6 +83,7 @@ class logique:
                 if state[x][y] != 0x2a: state[x][y] += 1
         return state
 
+
     def detect_zero(self, x, y):
         result=[]
         autre=[]
@@ -88,6 +95,7 @@ class logique:
             elif i not in self.locate_0: autre.append(i)
         return [result, autre]
 
+
     def choix_user(self, x, y):
         result = []
         autres = []
@@ -95,11 +103,13 @@ class logique:
         if not self.state:
             self.audio = audio(self.data[self.user]["musique"])
             self.audio.play()
+
             while True:
                 self.state = self.random_platform(self.n, self.nb_bombe)
                 if self.state[x][y] != 0x2a: break
 
         if self.state[x][y] == 0x2a:
+            self.audio.stop()
             return self.locate_0x2a
         elif (x, y) not in self.locate_0 and self.state[x][y] == 0:
             self.locate_0.append((x, y))
@@ -118,24 +128,30 @@ class logique:
 
         return result
 
+
     def get_case_from_coordinate(self, e, block_width, block_height, taille_bandeau):
         for i in range(self.n):
             if block_width * i < e.x < block_width * (i+1): x = i
             if taille_bandeau + block_height * i < e.y < taille_bandeau + block_height * (i+1): y = i
         return (x, y)
 
+
     def get_coordinate_from_case(self, x, y, block_width, block_height, taille_bandeau):
         xCenter = block_width * x + block_width / 2
         yCenter = block_height * y + block_height / 2 + taille_bandeau
         return [xCenter, yCenter]
 
+
     def get_difficulty(self):
         return self.data[self.user]["current_difficulty"]
 
+
     def reset(self):
         self.state = None
+        self.audio.stop()
         self.locate_0 = []
         self.locate_0x2a = []
+
 
     def current_user(self, str):
         """
@@ -155,12 +171,13 @@ class logique:
 
 
     def get_leader_board(self):
-        return sorted(self.data[self.user][ str(self.data[self.user]["current_difficulty"]) ])
+        return self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ]
+
 
     def save_data(self, score=None, difficulty=None, music=None):
         """
         input:
-            score: [float, str]
+            score: float
             difficulty: int
             music: str
         """
@@ -179,7 +196,12 @@ class logique:
                     self.n = 12
             if music: self.data[self.user]["musique"] = music
             if score:
-                self.data[self.user][ str(self.data[self.user]["current_difficulty"]) ].append([score[0], score[1]])
+                self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ].append([score, self.user])
+                self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ] = sorted(self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ])
+                if len(self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ]) >= 10:
+                    self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ].remove(
+                        self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ][-1]
+                    )
             data_json.write(json.dumps(self.data))
 
 
@@ -187,7 +209,6 @@ class logique:
 
 if __name__ == "__main__":
     logic = logique(0xc)
-    logic.affiche()
     logic.current_user("nocturio")
-    logic.save_data(score=[12, "escrime"], difficulty=2)
+    logic.save_data(score=[3, "escrime"], difficulty=2)
     print(logic.get_difficulty(),"\n", logic.get_leader_board())

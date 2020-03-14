@@ -2,6 +2,7 @@
 @author: BOTTI Joakim
 """
 
+from audio import *
 from random import sample, randrange
 from os import system
 import sys
@@ -24,7 +25,7 @@ information sur la difficulter:
         n = 16
     difficulty 3:
         nb_bombe = 84
-        n = 20
+        n = 21
 """
 
 
@@ -46,7 +47,7 @@ class logique:
         except:
             self.data = {
                 "nom_random": {
-                    "musique": "dc_rock_bust.mp3",
+                    "musique": "assets/dc_rock_bust.mp3",
                     "current_difficulty": 1,
                     "1": [],
                     "2": [],
@@ -92,6 +93,8 @@ class logique:
         autres = []
 
         if not self.state:
+            self.audio = audio(self.data[self.user]["musique"])
+            self.audio.play()
             while True:
                 self.state = self.random_platform(self.n, self.nb_bombe)
                 if self.state[x][y] != 0x2a: break
@@ -142,7 +145,7 @@ class logique:
         if self.user not in self.data.keys():
             print("un truc")
             self.data[str] = {
-                "musique": "dc_rock_bust.mp3",
+                "musique": "assets/dc_rock_bust.mp3",
                 "current_difficulty": 1,
                 "1": [],
                 "2": [],
@@ -170,7 +173,7 @@ class logique:
                     self.n = 16
                 elif difficulty == 3:
                     self.nb_bombe = 84
-                    self.n = 20
+                    self.n = 21
                 else:
                     self.nb_bombe = 24
                     self.n = 12

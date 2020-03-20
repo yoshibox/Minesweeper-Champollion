@@ -14,7 +14,7 @@
     - [ ] board customization ?
     - [ ] Afficheur SSD ?
     - [x] smiley at the top (with reaction)
-    - [ ] move cancellation
+    - [x] move cancellation
     - [ ] resizable board
     - [ ] themes
     - [ ] first click is never a mine

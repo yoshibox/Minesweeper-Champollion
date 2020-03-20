@@ -99,13 +99,19 @@ class Board: # écran de chargement Champollion
                 if self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
                     self.__menu__()
         
-        elif self.state == 4:
-            if self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.4 < e.y < self.HEIGHT*0.6:
+        elif self.state == 4: # GAME OVER
+            if self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.2 < e.y < self.HEIGHT*0.4:
                 self.board = []
                 self.flag = []
                 self.qMark = []
                 self.logic.reset()
                 self.__menu__()
+            elif self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.55 < e.y < self.HEIGHT*0.75:
+                self.board = self.board[0: -(self.logic.nb_bombe - len(self.flag) - len(self.qMark))]
+                self.canvas.delete("bombs")
+                self.canvas.delete("gameOver")
+                self.__stopwatch_update__()
+                self.state = 1
 
     def __leftclick__(self, e):
         if self.state == 1:
@@ -160,12 +166,18 @@ class Board: # écran de chargement Champollion
     def __GAME_OVER__(self):
         self.state = 4
         self.__stop_thread__()
-        self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.4, self.WIDTH*0.8, self.HEIGHT*0.6, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, self.HEIGHT/2, text="Retry", font="Noto 40")
+        self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.2, self.WIDTH*0.8, self.HEIGHT*0.4, fill="pink", tags="gameOver")
+        self.canvas.create_text(self.WIDTH/2, self.HEIGHT*0.3, text="Retry", font="Noto 40", tags="gameOver")
+        
+        self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.55, self.WIDTH*0.8, self.HEIGHT*0.75, fill="pink", tags="gameOver")
+        self.canvas.create_text(self.WIDTH/2, self.HEIGHT*0.65, text="Cancel last move", font="Noto 40", tags="gameOver")
     
 
     def __GAME_WON__(self):
-        pass
+        self.__stop_thread__() # Stopper le timer
+        self.logic.save_data(score=self.timer)
+        # Affichage d'un message "vous avez gagné en XXX.XX secondes avant le retour au menu"
+        self.__menu__()
 
 
     def __affichage_jeux__(self, e):
@@ -176,7 +188,7 @@ class Board: # écran de chargement Champollion
                 self.board.append((x, y))
                 xCenter, yCenter = self.logic.get_coordinate_from_case(x, y, self.bSizeL, self.bSizeH, self.tailleBandeau)
                 if r == 42:
-                    self.canvas.create_image(xCenter, yCenter, image=self.Bomb) # pk -6 ??????????????
+                    self.canvas.create_image(xCenter, yCenter, image=self.Bomb, tags="bombs")
                     self.__GAME_OVER__()
                 elif r == 0:
                     self.canvas.create_image(xCenter, yCenter, image=self.Zero)
@@ -198,6 +210,7 @@ class Board: # écran de chargement Champollion
                     self.canvas.create_image(xCenter, yCenter, image=self.Eight)
                 else:
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
+        print(self.board, len(self.board))
         if len(self.board) == self.logic.n ** 2 - self.logic.nb_bombe:
             self.__GAME_WON__()
 

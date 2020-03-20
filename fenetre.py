@@ -176,6 +176,9 @@ class Board: # écran de chargement Champollion
     def __GAME_WON__(self):
         self.__stop_thread__() # Stopper le timer
         self.logic.save_data(score=self.timer)
+        self.board = []
+        self.flag = []
+        self.qMark = []
         # Affichage d'un message "vous avez gagné en XXX.XX secondes avant le retour au menu"
         self.__menu__()
 

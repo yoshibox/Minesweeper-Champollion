@@ -96,13 +96,17 @@ class logique:
         return [result, autre]
 
 
+    def start_audio(self):
+        self.audio = audio(self.data[self.user]["musique"])
+        self.audio.play()
+
+
     def choix_user(self, x, y):
         result = []
         autres = []
 
         if not self.state:
-            self.audio = audio(self.data[self.user]["musique"])
-            self.audio.play()
+            self.start_audio()
 
             while True:
                 system("clear")

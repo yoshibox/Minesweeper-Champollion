@@ -12,3 +12,11 @@ class audio:
 
     def play(self):
         mixer.music.play()
+
+    def game_over(self):
+        mixer.music.load("assets/lost.mp3")
+        mixer.music.play()
+
+    def win(self):
+        mixer.music.load("assets/win.mp3")
+        mixer.music.play()

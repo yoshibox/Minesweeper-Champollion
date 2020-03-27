@@ -31,11 +31,10 @@ information sur la difficulter:
 
 class logique:
     nb_bombe = 24
-    show_case = []
     locate_0 = []
     locate_0x2a = []
-    data=None
     user="nom_random"
+    data=None
     state=None
 
 
@@ -48,7 +47,7 @@ class logique:
         except:
             self.data = {
                 "nom_random": {
-                    "musique": "assets/dc_rock_bust.mp3",
+                    "musique": "assets/music.wav",
                     "current_difficulty": 1
                 },
                 "leader_board": {
@@ -62,8 +61,7 @@ class logique:
 
 
     def affiche(self):
-        print('\n'.join(' '.join(map(str, L)) for L in self.state))
-        print()
+        print('\n'.join(' '.join(map(str, L)) for L in self.state) + "\n")
 
 
     def voisins(self, n, i, j):
@@ -71,13 +69,15 @@ class logique:
 
 
     def random_platform(self, n, nb_bombe):
-        #a faire: si l'user click sur une bombe on refais la platfome
+        tmp=0
         units=[(line,col) for col in range(n) for line in range(n)]
         bombe=sample(units, nb_bombe)
-        state=[[0x0]*n for _ in range(n)]
+        state=[[0x00]*n for _ in range(n)]
+        self.locate_0x2a = []
         for (i,z) in bombe:
             state[i][z]=0x2a
             self.locate_0x2a.append((0x2a, i, z))
+            tmp += 1
             voisin = self.voisins(n, i, z)
             for x, y in voisin:
                 if state[x][y] != 0x2a: state[x][y] += 1
@@ -105,11 +105,14 @@ class logique:
             self.audio.play()
 
             while True:
+                system("clear")
                 self.state = self.random_platform(self.n, self.nb_bombe)
-                if self.state[x][y] != 0x2a: break
+                self.affiche()
+                if self.state[x][y] == 0x00: break
 
         if self.state[x][y] == 0x2a:
             self.audio.stop()
+            self.audio.game_over()
             return self.locate_0x2a
         elif (x, y) not in self.locate_0 and self.state[x][y] == 0:
             self.locate_0.append((x, y))
@@ -159,9 +162,8 @@ class logique:
         """
         self.user = str
         if self.user not in self.data.keys():
-            print("un truc")
             self.data[str] = {
-                "musique": "assets/dc_rock_bust.mp3",
+                "musique": "assets/music.wav",
                 "current_difficulty": 1,
                 "1": [],
                 "2": [],
@@ -196,6 +198,8 @@ class logique:
                     self.n = 12
             if music: self.data[self.user]["musique"] = music
             if score:
+                self.audio.stop()
+                self.audio.win()
                 self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ].append([score, self.user])
                 self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ] = sorted(self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ])
                 if len(self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ]) >= 10:
@@ -210,5 +214,5 @@ class logique:
 if __name__ == "__main__":
     logic = logique(0xc)
     logic.current_user("nocturio")
-    logic.save_data(score=[3, "escrime"], difficulty=2)
+    logic.save_data(score=3, difficulty=2)
     print(logic.get_difficulty(),"\n", logic.get_leader_board())

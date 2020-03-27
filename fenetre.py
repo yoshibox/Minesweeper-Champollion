@@ -112,6 +112,7 @@ class Board: # écran de chargement Champollion
                 self.canvas.delete("bombs")
                 self.canvas.delete("gameOver")
                 self.__stopwatch_update__()
+                self.logic.start_audio()
                 self.state = 1
 
     def __leftclick__(self, e):

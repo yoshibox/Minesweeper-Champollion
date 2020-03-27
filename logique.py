@@ -107,7 +107,6 @@ class logique:
 
         if not self.state:
             self.start_audio()
-
             while True:
                 system("clear")
                 self.state = self.random_platform(self.n, self.nb_bombe)

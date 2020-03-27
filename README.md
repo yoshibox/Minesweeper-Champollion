@@ -2,12 +2,12 @@
 
 ## TODO List :
   ###### Important :
-    - [ ] gameplay
+    - [x] gameplay
     - [x] flag / question mark
-    - [ ] difficulty (Easy/Intermediate/Hard)
+    - [x] difficulty (Easy/Intermediate/Hard)
     - [x] mine counter
     - [x] stopwatch
-    - [ ] Restart button
+    - [x] Restart button
   ###### Non-important :
     - [ ] leaderboard
     - [ ] sound

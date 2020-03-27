@@ -105,6 +105,7 @@ class Board: # écran de chargement Champollion
                 self.flag = []
                 self.qMark = []
                 self.logic.reset()
+                self.logic.audio.stop()
                 self.__menu__()
             elif self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.55 < e.y < self.HEIGHT*0.75:
                 self.board = self.board[0: -(self.logic.nb_bombe - len(self.flag) - len(self.qMark))]

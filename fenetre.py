@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 from logique import *
 from threading import Timer
 from random import randrange as rd
+from glob import glob
 
 class Board: # écran de chargement Champollion
     def __init__(self, n, logique): # n = côté du tableau
@@ -21,17 +22,19 @@ class Board: # écran de chargement Champollion
         self.window.protocol("WM_DELETE_WINDOW", self.quit) # Appeler cette fonction quand la fenêtre est fermer
         self.canvas = Canvas(self.window, width=self.WIDTH, height=self.HEIGHT, background="green")
         self.canvas.pack()
+        self.themes = self.__get_theme_list() # Folder names of themes
+        self.selectedTheme = 0
         self.__update_sizes__()
         self.canvas.bind("<Button-1>", self.__rightclick__)
         self.canvas.bind("<Button-3>", self.__leftclick__)
-        self.stopwatch = None # timer Threading 
+        self.stopwatch = None # timer Threading
         self.__menu__()
-    
+
     def __update_sizes__(self):
         self.bSizeL = self.WIDTH / self.logic.n  # Largeur des boutons
         self.bSizeH = (self.HEIGHT - self.tailleBandeau) / self.logic.n # Hauteur des boutons
         self.__loadImages__()
-    
+
 
     def __stopwatch_update__(self):
         self.stopwatch = Timer(1, self.__stopwatch_update__)
@@ -92,13 +95,18 @@ class Board: # écran de chargement Champollion
                     self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.logic.get_difficulty()), font="Noto 15", tags="button")
                     self.__update_sizes__()
                 elif self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
+                    self.selectedTheme = (self.selectedTheme + 1)%len(self.themes)
+                    self.canvas.delete("theme")
+                    self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="CHANGE THEME : " + self.themes[self.selectedTheme], font="Noto 20", tags="theme")
+                    self.__loadImages__()
+                elif self.HEIGHT/10*5 < e.y < self.HEIGHT/10*6.5:
                     self.__menu__()
 
         elif self.state == 3: # Help
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
                 if self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
                     self.__menu__()
-        
+
         elif self.state == 4: # GAME OVER
             if self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.2 < e.y < self.HEIGHT*0.4:
                 self.board = []
@@ -153,7 +161,10 @@ class Board: # écran de chargement Champollion
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.logic.get_difficulty()), font="Noto 15", tags="button")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Noto 20")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="CHANGE THEME : " + self.themes[self.selectedTheme], font="Noto 20", tags="theme")
+
+        self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*5, self.WIDTH/(800/600), self.HEIGHT/10*6.5, fill="pink")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5+self.HEIGHT/10*6.5)/2, text="GO BACK", font="Noto 20")
 
     def __HELP__(self):
         self.state = 3
@@ -164,16 +175,16 @@ class Board: # écran de chargement Champollion
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Noto 20")
-    
+
     def __GAME_OVER__(self):
         self.state = 4
         self.__stop_thread__()
         self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.2, self.WIDTH*0.8, self.HEIGHT*0.4, fill="pink", tags="gameOver")
         self.canvas.create_text(self.WIDTH/2, self.HEIGHT*0.3, text="Retry", font="Noto 40", tags="gameOver")
-        
+
         self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.55, self.WIDTH*0.8, self.HEIGHT*0.75, fill="pink", tags="gameOver")
         self.canvas.create_text(self.WIDTH/2, self.HEIGHT*0.65, text="Cancel last move", font="Noto 40", tags="gameOver")
-    
+
 
     def __GAME_WON__(self):
         self.__stop_thread__() # Stopper le timer
@@ -219,25 +230,36 @@ class Board: # écran de chargement Champollion
         if len(self.board) == self.logic.n ** 2 - self.logic.nb_bombe:
             self.__GAME_WON__()
 
+
+    def __get_theme_list(self): # Return folders in assets/themes
+        L = []
+        for path in glob("assets/themes/*/"):
+            if path[13] == "\\": # Windows path
+                endOfPath = path[14:].index("\\") + 14
+            else: # Unix path
+                endOfPath = path[14:].index("/") + 14
+            L.append(path[14:endOfPath])
+        return L
+
     def __get_resized_tile__(self, name):
-        imgTmp = Image.open("assets/" + name)
+        imgTmp = Image.open("assets/themes/" + self.themes[self.selectedTheme] + "/" + name)
         imgTmp = imgTmp.resize((round(self.bSizeL), round(self.bSizeH)))
         return ImageTk.PhotoImage(imgTmp)
 
     def __loadImages__(self):
-        self.Case = self.__get_resized_tile__("minesweeper_00.png")
-        self.Bomb = self.__get_resized_tile__("minesweeper_05.png")
-        self.Flag = self.__get_resized_tile__("minesweeper_02.png")
-        self.QMark = self.__get_resized_tile__("minesweeper_03.png")
-        self.Zero = self.__get_resized_tile__("minesweeper_01.png")
-        self.One = self.__get_resized_tile__("minesweeper_08.png")
-        self.Two = self.__get_resized_tile__("minesweeper_09.png")
-        self.Three = self.__get_resized_tile__("minesweeper_10.png")
-        self.Four = self.__get_resized_tile__("minesweeper_11.png")
-        self.Five = self.__get_resized_tile__("minesweeper_12.png")
-        self.Six = self.__get_resized_tile__("minesweeper_13.png")
-        self.Seven = self.__get_resized_tile__("minesweeper_14.png")
-        self.Eight = self.__get_resized_tile__("minesweeper_15.png")
+        self.Case = self.__get_resized_tile__("base.png")
+        self.Bomb = self.__get_resized_tile__("bomb.png")
+        self.Flag = self.__get_resized_tile__("flag.png")
+        self.QMark = self.__get_resized_tile__("questionmark.png")
+        self.Zero = self.__get_resized_tile__("0.png")
+        self.One = self.__get_resized_tile__("1.png")
+        self.Two = self.__get_resized_tile__("2.png")
+        self.Three = self.__get_resized_tile__("3.png")
+        self.Four = self.__get_resized_tile__("4.png")
+        self.Five = self.__get_resized_tile__("5.png")
+        self.Six = self.__get_resized_tile__("6.png")
+        self.Seven = self.__get_resized_tile__("7.png")
+        self.Eight = self.__get_resized_tile__("8.png")
 
         imgTmp = Image.open("assets/emojis/emoji_smiling.png")
         imgTmp = imgTmp.resize(((round(self.tailleBandeau)), round(self.tailleBandeau)))
@@ -252,23 +274,23 @@ class Board: # écran de chargement Champollion
     def __emoji__(self):
         self.canvas.delete("emoji")
         self.canvas.create_image(self.WIDTH/2, self.tailleBandeau/2, image=self.Emojis[rd(0, len(self.Emojis))], tags="emoji")
-    
+
 
     def __mine_counter_update__(self):
         self.canvas.delete("counter")
         self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(self.logic.nb_bombe - (len(self.flag) + len(self.qMark))), font="Noto 20", tags="counter")
 
 
-    
+
     def start(self):
         self.window.mainloop()
-        #login_window = 
-    
+        #login_window =
+
 
     def __stop_thread__(self):
         if self.stopwatch != None:
             self.stopwatch.cancel()
-    
+
     def quit(self):
         self.__stop_thread__()
         self.window.quit()

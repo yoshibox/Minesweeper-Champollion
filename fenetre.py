@@ -23,7 +23,7 @@ class Board: # écran de chargement Champollion
         self.canvas = Canvas(self.window, width=self.WIDTH, height=self.HEIGHT, background="green")
         self.canvas.pack()
         self.themes = self.__get_theme_list() # Folder names of themes
-        self.selectedTheme = 0
+        self.selectedTheme = self.__startup_theme__()
         self.__update_sizes__()
         self.canvas.bind("<Button-1>", self.__rightclick__)
         self.canvas.bind("<Button-3>", self.__leftclick__)
@@ -228,6 +228,13 @@ class Board: # écran de chargement Champollion
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
         if len(self.board) == self.logic.n ** 2 - self.logic.nb_bombe:
             self.__GAME_WON__()
+
+    def __startup_theme__(self):
+        if logic.get_current_theme() != None:
+            return logic.get_current_theme
+        if "darkened" in self.themes:
+            return self.themes.index("darkened")
+        return 0
 
 
     def __get_theme_list(self): # Return folders in assets/themes

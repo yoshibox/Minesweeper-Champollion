@@ -16,5 +16,5 @@
     - [x] smiley at the top (with reaction)
     - [x] move cancellation
     - [ ] resizable board
-    - [ ] themes
-    - [ ] first click is never a mine
+    - [x] themes
+    - [x] first click is never a mine

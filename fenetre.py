@@ -19,6 +19,7 @@ class Board: # écran de chargement Champollion
         self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help, 4 = game over
         self.timer = 0 # Timer
         self.window = Tk()
+        self.window.title("Minesweeper")
         self.window.protocol("WM_DELETE_WINDOW", self.quit) # Appeler cette fonction quand la fenêtre est fermer
         self.canvas = Canvas(self.window, width=self.WIDTH, height=self.HEIGHT, background="green")
         self.canvas.pack()
@@ -29,6 +30,28 @@ class Board: # écran de chargement Champollion
         self.canvas.bind("<Button-3>", self.__leftclick__)
         self.stopwatch = None # timer Threading
         self.__menu__()
+
+
+    def __ask_pseudo__(self):
+        self.__new_window__()
+        self.second.title("Choose your pseudo")
+        self.pseudo = StringVar()
+        self.pseudo.set("pseudo")
+        textZone = Entry(self.second, textvariable=self.pseudo, width=30)
+        self.second.bind("<Return>", self.__second_window_destruction__)
+        textZone.pack()
+
+    def __new_window__(self):
+        self.second = Toplevel(master=self.window)
+        self.second.geometry("170x23+500+200")
+        self.second.protocol("WM_DELETE_WINDOW", self.__second_window_destruction__)
+        self.second.grab_set()
+
+    def __second_window_destruction__(self, *args):
+        logic.current_user(self.pseudo.get())
+        self.second.destroy()
+        self.__menu__()
+
 
     def __update_sizes__(self):
         self.bSizeL = self.WIDTH / self.logic.n  # Largeur des boutons
@@ -67,6 +90,9 @@ class Board: # écran de chargement Champollion
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*5, self.WIDTH/(800/600), self.HEIGHT/10*6.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5 + self.HEIGHT/10*6.5)/2, text="HELP", font="Noto 35")
 
+        self.canvas.create_rectangle(self.WIDTH - self.WIDTH/15, 2, self.WIDTH, self.HEIGHT/15, fill="pink")
+        self.canvas.create_text(self.WIDTH - 70, 50, text=logic.user, font="Noto 15")
+
     def __rightclick__(self, e):
         if self.state == 0: # Menu
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600): # Click sur la largeur ou il y a les boutons
@@ -76,6 +102,9 @@ class Board: # écran de chargement Champollion
                     self.__SETTINGS__()
                 elif self.HEIGHT/10*5 < e.y < self.HEIGHT/10*6.5: # Bouton HELP
                     self.__HELP__()
+            elif self.WIDTH - self.WIDTH/15 < e.x < self.WIDTH:
+                if 2 < e.y < self.HEIGHT/15:
+                    self.__ask_pseudo__()
 
         elif self.state == 1:
             if e.y < self.tailleBandeau: # Click dans le bandeau
@@ -290,7 +319,6 @@ class Board: # écran de chargement Champollion
 
     def start(self):
         self.window.mainloop()
-        #login_window =
 
 
     def __stop_thread__(self):

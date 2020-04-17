@@ -48,7 +48,8 @@ class logique:
             self.data = {
                 "nom_random": {
                     "musique": "assets/music.wav",
-                    "current_difficulty": 1
+                    "current_difficulty": 1,
+                    "current_theme":"darkened"
                 },
                 "leader_board": {
                     "1": [],
@@ -110,7 +111,7 @@ class logique:
             while True:
                 system("clear")
                 self.state = self.random_platform(self.n, self.nb_bombe)
-                self.affiche()
+                #self.affiche()
                 if self.state[x][y] == 0x00: break
 
         if self.state[x][y] == 0x2a:
@@ -175,11 +176,14 @@ class logique:
             self.save_data()
 
 
+    def get_current_theme(self):
+        return self.data[self.user]["current_theme"]
+
     def get_leader_board(self):
         return self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ]
 
 
-    def save_data(self, score=None, difficulty=None, music=None):
+    def save_data(self, score=None, difficulty=None, music=None, theme=None):
         """
         input:
             score: float
@@ -200,6 +204,7 @@ class logique:
                     self.nb_bombe = 24
                     self.n = 12
             if music: self.data[self.user]["musique"] = music
+            if theme: self.data[self.user]["current_theme"] = theme
             if score:
                 self.audio.stop()
                 self.audio.win()

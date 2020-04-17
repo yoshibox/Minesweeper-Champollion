@@ -177,7 +177,10 @@ class logique:
 
 
     def get_current_theme(self):
-        return self.data[self.user]["current_theme"]
+        try:
+            return self.data[self.user]["current_theme"]
+        except KeyError:
+            return None
 
     def get_leader_board(self):
         return self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ]

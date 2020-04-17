@@ -12,7 +12,7 @@
     - [ ] leaderboard
     - [ ] sound
     - [ ] board customization ?
-    - [ ] Afficheur SSD ?
+    - [ ] Afficheur LCD
     - [x] smiley at the top (with reaction)
     - [x] move cancellation
     - [ ] resizable board

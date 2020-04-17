@@ -226,7 +226,6 @@ class Board: # écran de chargement Champollion
                     self.canvas.create_image(xCenter, yCenter, image=self.Eight)
                 else:
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
-        print(self.board, len(self.board))
         if len(self.board) == self.logic.n ** 2 - self.logic.nb_bombe:
             self.__GAME_WON__()
 

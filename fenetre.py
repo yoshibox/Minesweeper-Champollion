@@ -144,6 +144,7 @@ class Board: # écran de chargement Champollion
                 self.logic.reset()
                 self.logic.audio.stop()
                 self.__menu__()
+                self.logic.reset()
             elif self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.55 < e.y < self.HEIGHT*0.75:
                 toDelete = []
                 for i in range(len(self.board)): # Delete all the bombs listed
@@ -164,6 +165,7 @@ class Board: # écran de chargement Champollion
             if self.WIDTH*0.2 < e.x < self.WIDTH*0.8:
                 if self.HEIGHT*0.4 < e.y < self.HEIGHT*0.6:
                     self.__menu__()
+                    self.logic.reset()
 
     def __leftclick__(self, e):
         if self.state == 1:

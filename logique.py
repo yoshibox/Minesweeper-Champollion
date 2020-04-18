@@ -4,7 +4,7 @@
 
 from audio import *
 from random import sample, randrange
-from os import system
+from os import system, name
 import sys
 from time import sleep
 import json
@@ -109,7 +109,8 @@ class logique:
         if not self.state:
             self.start_audio()
             while True:
-                system("clear")
+                if name == "nt": system("cls")
+                else: system("clear")
                 self.state = self.random_platform(self.n, self.nb_bombe)
                 #self.affiche()
                 if self.state[x][y] == 0x00: break

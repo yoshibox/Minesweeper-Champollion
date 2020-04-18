@@ -5,6 +5,7 @@ from threading import Timer
 from random import randrange as rd
 from glob import glob
 
+
 class Board: # écran de chargement Champollion
     def __init__(self, n, logique): # n = côté du tableau
         self.logic = logique
@@ -90,6 +91,9 @@ class Board: # écran de chargement Champollion
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*5, self.WIDTH/(800/600), self.HEIGHT/10*6.5, fill="pink")
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5 + self.HEIGHT/10*6.5)/2, text="HELP", font="Noto 35")
 
+        self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*7, self.WIDTH/(800/600), self.HEIGHT/10*8.5, fill="pink")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*7 + self.HEIGHT/10*8.5)/2, text="LEADERBOARD", font="Noto 35")
+
         self.canvas.create_rectangle(self.WIDTH - self.WIDTH/15, 2, self.WIDTH, self.HEIGHT/15, fill="pink")
         self.canvas.create_text(self.WIDTH*0.99, 50, anchor="ne", text=self.logic.user, font="Noto 15")
 
@@ -102,6 +106,8 @@ class Board: # écran de chargement Champollion
                     self.__SETTINGS__()
                 elif self.HEIGHT/10*5 < e.y < self.HEIGHT/10*6.5: # Bouton HELP
                     self.__HELP__()
+                elif self.HEIGHT/10*7 < e.y < self.HEIGHT/10*8.5: # Bouton HELP
+                    self.__LEADERBOARD__()
             elif self.WIDTH - self.WIDTH/15 < e.x < self.WIDTH:
                 if 2 < e.y < self.HEIGHT/15:
                     self.__ask_pseudo__()
@@ -240,6 +246,11 @@ class Board: # écran de chargement Champollion
 
         self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.4, self.WIDTH*0.8, self.HEIGHT*0.6, fill="pink")
         self.canvas.create_text(self.WIDTH/2, self.HEIGHT/2, text="Bravo vous avez gagné en " + str(self.timer) + " secondes\n Cliquez ici pour retourner au menu", font="Noto 19")
+
+
+    def __LEADERBOARD__(self):
+        leaderboard = self.__new_window__()
+        print(leaderboard)
 
 
     def __affichage_jeux__(self, e):

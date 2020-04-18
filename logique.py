@@ -170,9 +170,7 @@ class logique:
             self.data[str] = {
                 "musique": "assets/music.wav",
                 "current_difficulty": 1,
-                "1": [],
-                "2": [],
-                "3": []
+                "current_theme": "darkened"
             }
             self.save_data()
 
@@ -184,7 +182,7 @@ class logique:
             return None
 
     def get_leader_board(self):
-        return self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ]
+        return self.data["leader_board"]
 
 
     def save_data(self, score=None, difficulty=None, music=None, theme=None):

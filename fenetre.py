@@ -91,7 +91,7 @@ class Board: # écran de chargement Champollion
         self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5 + self.HEIGHT/10*6.5)/2, text="HELP", font="Noto 35")
 
         self.canvas.create_rectangle(self.WIDTH - self.WIDTH/15, 2, self.WIDTH, self.HEIGHT/15, fill="pink")
-        self.canvas.create_text(self.WIDTH - 70, 50, text=logic.user, font="Noto 15")
+        self.canvas.create_text(self.WIDTH*0.99, 50, anchor="ne", text=logic.user, font="Noto 15")
 
     def __rightclick__(self, e):
         if self.state == 0: # Menu

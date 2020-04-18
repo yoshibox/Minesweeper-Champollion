@@ -276,7 +276,7 @@ class Board: # écran de chargement Champollion
 
     def __startup_theme__(self):
         if self.logic.get_current_theme() != None:
-            return self.logic.get_current_theme
+            return self.logic.get_current_theme()
         if "darkened" in self.themes:
             return self.themes.index("darkened")
         return 0

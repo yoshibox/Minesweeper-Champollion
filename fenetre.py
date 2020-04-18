@@ -16,7 +16,7 @@ class Board: # écran de chargement Champollion
         self.board = [] # Coordinate of cases disovered on the board
         self.flag = []  # Coordinate of the flags placed
         self.qMark = [] # Coordinate of the questions mark placed
-        self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help, 4 = game over
+        self.state = 0 # 0 = menu, 1 = in-game, 2 = settings, 3 = help, 4 = game over, 5 = game won
         self.timer = 0 # Timer
         self.window = Tk()
         self.window.title("Minesweeper")
@@ -106,7 +106,7 @@ class Board: # écran de chargement Champollion
                 if 2 < e.y < self.HEIGHT/15:
                     self.__ask_pseudo__()
 
-        elif self.state == 1:
+        elif self.state == 1: # In-Game
             if e.y < self.tailleBandeau: # Click dans le bandeau
                 if self.WIDTH/2 - self.tailleBandeau/2 < e.x < self.WIDTH/2 + self.tailleBandeau/2:
                     self.__emoji__()
@@ -145,12 +145,25 @@ class Board: # écran de chargement Champollion
                 self.logic.audio.stop()
                 self.__menu__()
             elif self.WIDTH*0.2 < e.x < self.WIDTH*0.8 and self.HEIGHT*0.55 < e.y < self.HEIGHT*0.75:
-                self.board = self.board[0: -(self.logic.nb_bombe - len(self.flag) - len(self.qMark))]
+                toDelete = []
+                for i in range(len(self.board)): # Delete all the bombs listed
+                    x = self.board[i][0]
+                    y = self.board[i][1]
+                    if self.logic.state[x][y] == 42:
+                        toDelete.append(i)
+                toDelete.reverse()
+                for i in toDelete:
+                    self.board.pop(i)
+
                 self.canvas.delete("bombs")
                 self.canvas.delete("gameOver")
                 self.__stopwatch_update__()
                 self.logic.start_audio()
                 self.state = 1
+        elif self.state == 5: # Game Won
+            if self.WIDTH*0.2 < e.x < self.WIDTH*0.8:
+                if self.HEIGHT*0.4 < e.y < self.HEIGHT*0.6:
+                    self.__menu__()
 
     def __leftclick__(self, e):
         if self.state == 1:
@@ -216,13 +229,15 @@ class Board: # écran de chargement Champollion
 
 
     def __GAME_WON__(self):
+        self.state = 5
         self.__stop_thread__() # Stopper le timer
         self.logic.save_data(score=self.timer)
         self.board = []
         self.flag = []
         self.qMark = []
-        # Affichage d'un message "vous avez gagné en XXX.XX secondes avant le retour au menu"
-        self.__menu__()
+
+        self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.4, self.WIDTH*0.8, self.HEIGHT*0.6, fill="pink")
+        self.canvas.create_text(self.WIDTH/2, self.HEIGHT/2, text="Bravo vous avez gagné en " + str(self.timer) + " secondes\n Cliquez ici pour retourner au menu", font="Noto 19")
 
 
     def __affichage_jeux__(self, e):
@@ -255,12 +270,13 @@ class Board: # écran de chargement Champollion
                     self.canvas.create_image(xCenter, yCenter, image=self.Eight)
                 else:
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
+        print("Nombre de case dans self.board : " + str(len(self.board)))
         if len(self.board) == self.logic.n ** 2 - self.logic.nb_bombe:
             self.__GAME_WON__()
 
     def __startup_theme__(self):
-        if logic.get_current_theme() != None:
-            return logic.get_current_theme
+        if self.logic.get_current_theme() != None:
+            return self.logic.get_current_theme
         if "darkened" in self.themes:
             return self.themes.index("darkened")
         return 0

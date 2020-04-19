@@ -49,7 +49,10 @@ class Board: # écran de chargement Champollion
         self.second.grab_set()
 
     def __second_window_destruction__(self, *args):
-        self.logic.current_user(self.pseudo.get())
+        try:
+            self.logic.current_user(self.pseudo.get())
+        except:
+            pass
         self.second.destroy()
         self.__menu__()
 

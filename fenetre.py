@@ -46,7 +46,6 @@ class Board: # écran de chargement Champollion
         self.second = Toplevel(master=self.window)
         self.second.geometry("170x23+500+200")
         self.second.protocol("WM_DELETE_WINDOW", self.__second_window_destruction__)
-        self.second.grab_set()
 
     def __second_window_destruction__(self, *args):
         try:
@@ -258,6 +257,7 @@ class Board: # écran de chargement Champollion
 
     def __affichage_jeux__(self, e):
         x, y = self.logic.get_case_from_coordinate(e, self.bSizeL, self.bSizeH, self.tailleBandeau) # Case numéro x, y
+        if (x, y) in self.flag or (x, y) in self.qMark: return
         resultats = self.logic.choix_user(x, y) # Qu'est-ce que y'avait sur cette case ? (renvoie une liste de tuple (x,y))
         for r, x, y in resultats:
             if (x, y) not in self.board and (x, y) not in self.flag and (x, y) not in self.qMark:

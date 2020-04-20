@@ -251,8 +251,21 @@ class Board: # écran de chargement Champollion
 
 
     def __LEADERBOARD__(self):
-        leaderboard = self.__new_window__()
-        print(leaderboard)
+        self.__new_window__()
+        self.second.geometry("650x250")
+        leaderboard = self.logic.get_leader_board()
+
+        for i in range(1, len(leaderboard)+1):
+            labelframe = LabelFrame(self.second, text="DIFFICULTY:" + str(i))
+            labelframe.grid(ipady=10, ipadx=7, padx=10, row=0, column=i-1)
+            scrollbar = Scrollbar(labelframe)
+            scrollbar.pack(side=RIGHT)
+            mylist = Listbox(labelframe, yscrollcommand=scrollbar.set)
+            for time, player in leaderboard[str(i)]:
+                mylist.insert(END, str(time) + " "*15 + player)
+            mylist.pack(side=LEFT)
+            scrollbar.config(command=mylist.yview)
+
 
 
     def __affichage_jeux__(self, e):

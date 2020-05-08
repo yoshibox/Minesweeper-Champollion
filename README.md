@@ -9,7 +9,7 @@
     - [x] stopwatch
     - [x] Restart button
   ###### Non-important :
-    - [ ] leaderboard
+    - [x] leaderboard
     - [ ] sound
     - [ ] board customization ?
     - [ ] Afficheur LCD

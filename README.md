@@ -10,7 +10,7 @@
     - [x] Restart button
   ###### Non-important :
     - [x] leaderboard
-    - [ ] sound
+    - [x] sound
     - [ ] board customization ?
     - [ ] Afficheur LCD
     - [x] smiley at the top (with reaction)

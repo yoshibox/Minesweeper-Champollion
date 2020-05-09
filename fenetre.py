@@ -67,7 +67,7 @@ class Board: # écran de chargement Champollion
         self.stopwatch.start()
         self.timer += 1
         self.canvas.delete("timer")
-        self.canvas.create_text(self.WIDTH - self.WIDTH/40, self.tailleBandeau/2, text=str(round(self.timer)), font="Arial 20", tags="timer")
+        self.canvas.create_text(self.WIDTH - self.tailleBandeau/10, self.tailleBandeau/10, text=str(round(self.timer)), font="Arial 20", tags="timer", anchor="ne")
 
     def __drawBoard__(self):
         self.canvas.delete("all")
@@ -367,7 +367,7 @@ class Board: # écran de chargement Champollion
 
     def __mine_counter_update__(self):
         self.canvas.delete("counter")
-        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(self.logic.nb_bombe - (len(self.flag) + len(self.qMark))), font="Arial 20", tags="counter")
+        self.canvas.create_text(self.tailleBandeau/10, self.tailleBandeau/10, text=str(self.logic.nb_bombe - (len(self.flag) + len(self.qMark))), font="Arial 20", tags="counter", anchor="nw")
 
 
 

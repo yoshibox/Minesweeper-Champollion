@@ -67,7 +67,7 @@ class Board: # écran de chargement Champollion
         self.stopwatch.start()
         self.timer += 1
         self.canvas.delete("timer")
-        self.canvas.create_text(self.WIDTH - self.WIDTH/40, self.tailleBandeau/2, text=str(round(self.timer)), font="Noto 20", tags="timer")
+        self.canvas.create_text(self.WIDTH - self.WIDTH/40, self.tailleBandeau/2, text=str(round(self.timer)), font="Arial 20", tags="timer")
 
     def __drawBoard__(self):
         self.canvas.delete("all")
@@ -85,19 +85,19 @@ class Board: # écran de chargement Champollion
         self.canvas.delete("all")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10, self.WIDTH/(800/600), self.HEIGHT/10*2.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="START GAME", font="Noto 35")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="START GAME", font="Arial 35")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3 + self.HEIGHT/10*4.5)/2, text="SETTINGS", font="Noto 35")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3 + self.HEIGHT/10*4.5)/2, text="SETTINGS", font="Arial 35")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*5, self.WIDTH/(800/600), self.HEIGHT/10*6.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5 + self.HEIGHT/10*6.5)/2, text="HELP", font="Noto 35")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5 + self.HEIGHT/10*6.5)/2, text="HELP", font="Arial 35")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*7, self.WIDTH/(800/600), self.HEIGHT/10*8.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*7 + self.HEIGHT/10*8.5)/2, text="LEADERBOARD", font="Noto 35")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*7 + self.HEIGHT/10*8.5)/2, text="LEADERBOARD", font="Arial 35")
 
         self.canvas.create_rectangle(self.WIDTH - self.WIDTH/15, 2, self.WIDTH, self.HEIGHT/15, fill="pink")
-        self.canvas.create_text(self.WIDTH*0.99, 50, anchor="ne", text=self.logic.user, font="Noto 15")
+        self.canvas.create_text(self.WIDTH*0.99, 50, anchor="ne", text=self.logic.user, font="Arial 15")
 
     def __rightclick__(self, e):
         if self.state == 0: # Menu
@@ -129,13 +129,14 @@ class Board: # écran de chargement Champollion
                     else:
                         self.logic.save_data(difficulty=self.logic.get_difficulty()+1)
                     self.canvas.delete("button")
-                    self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.logic.get_difficulty()), font="Noto 15", tags="button")
+                    self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.logic.get_difficulty()), font="Arial 15", tags="button")
                     self.__update_sizes__()
                 elif self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
                     self.selectedTheme = (self.selectedTheme + 1)%len(self.themes)
                     self.canvas.delete("theme")
-                    self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="CHANGE THEME : " + self.themes[self.selectedTheme], font="Noto 20", tags="theme")
+                    self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="CHANGE THEME : " + self.themes[self.selectedTheme], font="Arial 20", tags="theme")
                     self.__loadImages__()
+                    self.logic.save_data(theme=self.themes[self.selectedTheme])
                 elif self.HEIGHT/10*5 < e.y < self.HEIGHT/10*6.5:
                     self.__menu__()
 
@@ -210,32 +211,32 @@ class Board: # écran de chargement Champollion
         self.canvas.delete("all")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10, self.WIDTH/(800/600), self.HEIGHT/10*2.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.logic.get_difficulty()), font="Noto 15", tags="button")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="CHANGE DIFFICULTY : " + str(self.logic.get_difficulty()), font="Arial 15", tags="button")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="CHANGE THEME : " + self.themes[self.selectedTheme], font="Noto 20", tags="theme")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="CHANGE THEME : " + self.themes[self.selectedTheme], font="Arial 20", tags="theme")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*5, self.WIDTH/(800/600), self.HEIGHT/10*6.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5+self.HEIGHT/10*6.5)/2, text="GO BACK", font="Noto 20")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5+self.HEIGHT/10*6.5)/2, text="GO BACK", font="Arial 20")
 
     def __HELP__(self):
         self.state = 3
         self.canvas.delete("all")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10, self.WIDTH/(800/600), self.HEIGHT/10*2.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="METTRE LES REGLES ICI !!!!!!!!", font="Noto 15")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="METTRE LES REGLES ICI !!!!!!!!", font="Arial 15")
 
         self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Noto 20")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Arial 20")
 
     def __GAME_OVER__(self):
         self.state = 4
         self.__stop_thread__()
         self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.2, self.WIDTH*0.8, self.HEIGHT*0.4, fill="pink", tags="gameOver")
-        self.canvas.create_text(self.WIDTH/2, self.HEIGHT*0.3, text="Retry", font="Noto 40", tags="gameOver")
+        self.canvas.create_text(self.WIDTH/2, self.HEIGHT*0.3, text="Retry", font="Arial 40", tags="gameOver")
 
         self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.55, self.WIDTH*0.8, self.HEIGHT*0.75, fill="pink", tags="gameOver")
-        self.canvas.create_text(self.WIDTH/2, self.HEIGHT*0.65, text="Cancel last move", font="Noto 40", tags="gameOver")
+        self.canvas.create_text(self.WIDTH/2, self.HEIGHT*0.65, text="Cancel last move", font="Arial 40", tags="gameOver")
 
 
     def __GAME_WON__(self):
@@ -247,7 +248,7 @@ class Board: # écran de chargement Champollion
         self.qMark = []
 
         self.canvas.create_rectangle(self.WIDTH*0.2, self.HEIGHT*0.4, self.WIDTH*0.8, self.HEIGHT*0.6, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, self.HEIGHT/2, text="Bravo vous avez gagné en " + str(self.timer) + " secondes\n Cliquez ici pour retourner au menu", font="Noto 19")
+        self.canvas.create_text(self.WIDTH/2, self.HEIGHT/2, text="Bravo vous avez gagné en " + str(self.timer) + " secondes\n Cliquez ici pour retourner au menu", font="Arial 19")
 
 
     def __LEADERBOARD__(self):
@@ -298,7 +299,7 @@ class Board: # écran de chargement Champollion
                 elif r == 8:
                     self.canvas.create_image(xCenter, yCenter, image=self.Eight)
                 else:
-                    self.canvas.create_text(xCenter, yCenter, text=str(r), font="Noto 20")
+                    self.canvas.create_text(xCenter, yCenter, text=str(r), font="Arial 20")
         print("Nombre de case dans self.board : " + str(len(self.board)))
         if len(self.board) == self.logic.n ** 2 - self.logic.nb_bombe:
             self.__GAME_WON__()
@@ -358,7 +359,7 @@ class Board: # écran de chargement Champollion
 
     def __mine_counter_update__(self):
         self.canvas.delete("counter")
-        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(self.logic.nb_bombe - (len(self.flag) + len(self.qMark))), font="Noto 20", tags="counter")
+        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(self.logic.nb_bombe - (len(self.flag) + len(self.qMark))), font="Arial 20", tags="counter")
 
 
 

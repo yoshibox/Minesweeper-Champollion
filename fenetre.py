@@ -7,7 +7,7 @@ from glob import glob
 
 
 class Board: # écran de chargement Champollion
-    def __init__(self, n, logique): # n = côté du tableau
+    def __init__(self, logique): # n = côté du tableau
         self.logic = logique
         self.play = 1
         self.WIDTH = 800
@@ -67,7 +67,7 @@ class Board: # écran de chargement Champollion
         self.stopwatch.start()
         self.timer += 1
         self.canvas.delete("timer")
-        self.canvas.create_text(self.WIDTH - self.WIDTH/40, self.tailleBandeau/2, text=str(round(self.timer)), font="Arial 20", tags="timer")
+        self.canvas.create_text(self.WIDTH - self.tailleBandeau/10, self.tailleBandeau/10, text=str(round(self.timer)), font="Arial 20", tags="timer", anchor="ne")
 
     def __drawBoard__(self):
         self.canvas.delete("all")
@@ -142,7 +142,7 @@ class Board: # écran de chargement Champollion
 
         elif self.state == 3: # Help
             if self.WIDTH/4 < e.x < self.WIDTH/(800/600):
-                if self.HEIGHT/10*3 < e.y < self.HEIGHT/10*4.5:
+                if self.HEIGHT/10*5 < e.y < self.HEIGHT/10*6.5:
                     self.__menu__()
 
         elif self.state == 4: # GAME OVER
@@ -223,11 +223,19 @@ class Board: # écran de chargement Champollion
         self.state = 3
         self.canvas.delete("all")
 
-        self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10, self.WIDTH/(800/600), self.HEIGHT/10*2.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10+self.HEIGHT/10*2.5)/2, text="METTRE LES REGLES ICI !!!!!!!!", font="Arial 15")
+        self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10, self.WIDTH/(800/600), self.HEIGHT/10*4.2, fill="pink")
+        self.canvas.create_text(self.WIDTH/2, self.HEIGHT/10, text="\
+        Le but du jeu est de découvrir\n\
+        toutes les cases sans tomber\n\
+        sur une mine. La première case\n\
+        cliquer ne sera jamais une mine,\n\
+        et grâce aux cases découvertes\n\
+        on peut savoir le nombre de\n\
+        bombes autour de cette case\n\
+        (pour un maximum de 8)", font="Arial 16", anchor="n")
 
-        self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*3, self.WIDTH/(800/600), self.HEIGHT/10*4.5, fill="pink")
-        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*3+self.HEIGHT/10*4.5)/2, text="GO BACK", font="Arial 20")
+        self.canvas.create_rectangle(self.WIDTH/4, self.HEIGHT/10*5, self.WIDTH/(800/600), self.HEIGHT/10*6.5, fill="pink")
+        self.canvas.create_text(self.WIDTH/2, (self.HEIGHT/10*5+self.HEIGHT/10*6.5)/2, text="GO BACK", font="Arial 20")
 
     def __GAME_OVER__(self):
         self.state = 4
@@ -359,7 +367,7 @@ class Board: # écran de chargement Champollion
 
     def __mine_counter_update__(self):
         self.canvas.delete("counter")
-        self.canvas.create_text(self.WIDTH/40, self.tailleBandeau/2, text=str(self.logic.nb_bombe - (len(self.flag) + len(self.qMark))), font="Arial 20", tags="counter")
+        self.canvas.create_text(self.tailleBandeau/10, self.tailleBandeau/10, text=str(self.logic.nb_bombe - (len(self.flag) + len(self.qMark))), font="Arial 20", tags="counter", anchor="nw")
 
 
 
@@ -384,5 +392,5 @@ class Board: # écran de chargement Champollion
 if __name__ == "__main__":
     n = 12
     logic = logique(n)
-    tableau = Board(n, logic)
+    tableau = Board(logic)
     tableau.start()

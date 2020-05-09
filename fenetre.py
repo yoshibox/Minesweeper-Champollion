@@ -7,7 +7,7 @@ from glob import glob
 
 
 class Board: # écran de chargement Champollion
-    def __init__(self, n, logique): # n = côté du tableau
+    def __init__(self, logique): # n = côté du tableau
         self.logic = logique
         self.play = 1
         self.WIDTH = 800

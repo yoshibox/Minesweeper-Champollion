@@ -43,8 +43,11 @@ class logique:
 
         try:
             with open("assets/data.json") as new_json:
+                print("json open")
                 self.data = json.load(new_json)
+                self.init_difficulty()
         except:
+            print("add json into assets")
             self.data = {
                 "nom_random": {
                     "musique": "assets/music.wav",
@@ -181,8 +184,21 @@ class logique:
         except KeyError:
             return None
 
+
     def get_leader_board(self):
         return self.data["leader_board"]
+
+
+    def init_difficulty(self):
+        if self.data[self.user]["current_difficulty"] == 2:
+            self.nb_bombe = 42
+            self.n = 16
+        elif self.data[self.user]["current_difficulty"] == 3:
+            self.nb_bombe = 84
+            self.n = 21
+        else:
+            self.nb_bombe = 24
+            self.n = 12
 
 
     def save_data(self, score=None, difficulty=None, music=None, theme=None):
@@ -196,15 +212,7 @@ class logique:
         with open("assets/data.json","w") as data_json:
             if difficulty:
                 self.data[self.user]["current_difficulty"] = difficulty
-                if difficulty == 2:
-                    self.nb_bombe = 42
-                    self.n = 16
-                elif difficulty == 3:
-                    self.nb_bombe = 84
-                    self.n = 21
-                else:
-                    self.nb_bombe = 24
-                    self.n = 12
+                self.init_difficulty()
             if music: self.data[self.user]["musique"] = music
             if theme: self.data[self.user]["current_theme"] = theme
             if score:
@@ -217,7 +225,7 @@ class logique:
                         self.data["leader_board"][ str(self.data[self.user]["current_difficulty"]) ][-1]
                     )
             data_json.write(json.dumps(self.data))
-
+            print("json saved...")
 
 
 

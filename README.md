@@ -1,8 +1,8 @@
 # Minesweeper
 
 ### Asset link :
-    - [Darknened theme](https://gooseninja.itch.io/pixel-minesweeper)
-    - [Lazarus theme](https://opengameart.org/content/minesweeper-tile-set-lazarus)
+    - Darknened theme : https://gooseninja.itch.io/pixel-minesweeper
+    - Lazarus theme : https://opengameart.org/content/minesweeper-tile-set-lazarus
 
 ## TODO List :
   ###### Important :

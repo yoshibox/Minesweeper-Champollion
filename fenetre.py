@@ -308,7 +308,6 @@ class Board: # écran de chargement Champollion
                     self.canvas.create_image(xCenter, yCenter, image=self.Eight)
                 else:
                     self.canvas.create_text(xCenter, yCenter, text=str(r), font="Arial 20")
-        print("Nombre de case dans self.board : " + str(len(self.board)))
         if len(self.board) == self.logic.n ** 2 - self.logic.nb_bombe:
             self.__GAME_WON__()
 

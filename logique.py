@@ -50,7 +50,7 @@ class logique:
             print("add json into assets")
             self.data = {
                 "nom_random": {
-                    "musique": "assets/music.wav",
+                    "musique": "assets/music.mp3",
                     "current_difficulty": 1,
                     "current_theme":"darkened"
                 },
@@ -171,7 +171,7 @@ class logique:
         self.user = str
         if self.user not in self.data.keys():
             self.data[str] = {
-                "musique": "assets/music.wav",
+                "musique": "assets/music.mp3",
                 "current_difficulty": 1,
                 "current_theme": "darkened"
             }
